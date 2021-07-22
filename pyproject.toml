@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iytdl"
-version = "0.1.0"
+version = "0.1.5"
 description = "Asynchronous Standalone Inline YouTube-DL Module"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
 classifiers = [

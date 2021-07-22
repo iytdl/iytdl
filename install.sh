@@ -10,6 +10,6 @@ echo "Building..."
 rm -rf dist
 pip uninstall iytdl -y
 poetry build &> /dev/null
-pip install "dist/iytdl-0.1.1-py3-none-any.whl" &> /dev/null
+pip install "$(ls dist/*.whl)" &> /dev/null
 echo "Installed 'iytdl' Sucessfully"
 
