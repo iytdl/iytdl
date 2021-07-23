@@ -1,17 +1,17 @@
-<center><img src="https://i.imgur.com/h7i3L6g.png"></center>
+<p align="center">
+<img src="https://i.imgur.com/Q94CDKC.png" width=250px>
 
 # iYTDL
 
-<p align="center">
-<a href="https://github.com/iytdl/iytdl/actions"><img alt="Actions Status" src="https://github.com/psf/black/workflows/Test/badge.svg"></a>
-<a href="https://github.com/psf/black/actions"><img alt="Actions Status" src="https://github.com/psf/black/workflows/Primer/badge.svg"></a>
+<a href="https://github.com/iytdl/iytdl/actions"><img alt="Actions Status" src="https://github.com/psf/black/workflows/Primer/badge.svg"></a>
 <a href="https://github.com/iytdl/iytdl/blob/main/LICENSE"><img alt="License: GPLv3" src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a>
 <a href="https://pypi.org/project/iytdl/"><img alt="PyPI" src="https://img.shields.io/pypi/v/iytdl"></a>
 <a href="https://pepy.tech/project/iytdl"><img alt="Downloads" src="https://pepy.tech/badge/iytdl"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+
 </p>
 
-<h2 align="center">Async Standalone Inline YouTube-DL Module</h2>
+> Asynchronous Standalone Inline YouTube-DL Module
 
 ## ⭐️ Features
 
