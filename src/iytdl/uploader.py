@@ -5,17 +5,14 @@ import logging
 import os
 import re
 import time
-
 from io import BytesIO
 from math import floor
 from pathlib import Path, PurePath
 from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 import mutagen
-
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from iytdl.utils import *  # noqa ignore=F405
 from PIL import Image
 from pyrogram import Client, StopPropagation
 from pyrogram.errors import FloodWait
@@ -23,6 +20,7 @@ from pyrogram.types import InputMediaAudio, InputMediaVideo
 from pyrogram.types.bots_and_keyboards.callback_query import CallbackQuery
 from pyrogram.types.messages_and_media.message import Message
 
+from iytdl.utils import *  # noqa ignore=F405
 
 logger = logging.getLogger(__name__)
 _PROCESS: Dict[str, Tuple[int, int]] = {}

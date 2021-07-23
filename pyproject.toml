@@ -45,11 +45,10 @@ autoflake = "^1.4"
 
 [tool.isort]
 profile = "black"
-include_trailing_comma = true
-lines_after_imports = 2
-lines_between_types = 1
-use_parentheses = true
-src_paths = ["iytdl", "tests"]
+# include_trailing_comma = true
+# lines_after_imports = 2
+# lines_between_types = 1
+# use_parentheses = true
 filter_files = true
 
 [tool.black]

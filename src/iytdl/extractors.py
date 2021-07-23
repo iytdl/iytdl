@@ -1,19 +1,17 @@
 __all__ = ["Extractor"]
 
 import logging
-
 from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 
 import youtube_dl
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from youtube_dl.utils import DownloadError, ExtractorError, UnsupportedError
 
 from iytdl.constants import YT_VID_URL
 from iytdl.formatter import ResultFormatter as res_f
 from iytdl.types import SearhResult
 from iytdl.utils import *  # noqa ignore=F405
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from youtube_dl.utils import DownloadError, ExtractorError, UnsupportedError
-
 
 logger = logging.getLogger(__name__)
 

@@ -13,7 +13,6 @@ import logging
 import os
 import tempfile
 import traceback
-
 from datetime import timedelta
 from functools import partial, wraps
 from io import BytesIO
@@ -22,9 +21,9 @@ from random import sample
 from typing import Any, Awaitable, Callable, List, Optional, Union
 
 from aiohttp import ClientSession, FormData
-from iytdl.constants import *  # noqa ignore=F405
 from PIL import Image
 
+from iytdl.constants import *  # noqa ignore=F405
 
 _CHAR: List[str] = list("_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy")
 logger = logging.getLogger(__name__)

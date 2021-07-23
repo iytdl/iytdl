@@ -1,7 +1,6 @@
 __all__ = ["SearhResult"]
 
 import json
-
 from typing import Optional
 
 from pyrogram.types import InlineKeyboardMarkup
