@@ -29,7 +29,7 @@ jobs:
       - name: Check pyproject.toml validity
         run: poetry check --no-interaction
       - name: Setup package
-        run: poetry install --no-interactionn
+        run: poetry install --no-interaction
       - run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
       - name: Publish package
         run: poetry publish --build
