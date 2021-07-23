@@ -17,8 +17,8 @@ jobs:
         run: echo "${HOME}/.poetry/bin" >> $GITHUB_PATH
       - name: Add version to environment vars
         run: |
-          TAGS=$(git describe HEAD --tags --abbrev=0)
-          echo "TAGS=$TAGS" >> $GITHUB_ENV
+          PROJECT_VERSION=$(poetry version --short)
+          echo "PROJECT_VERSION=$PROJECT_VERSION" >> $GITHUB_ENV
       - name: Build
         run: |
           poetry install --no-interactionn
@@ -26,8 +26,8 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: $TAG
-          name: Release $TAG
+          tag_name: v$PROJECT_VERSION
+          name: Release v$PROJECT_VERSION
           draft: true
           files: ./dist/*
         env:
