@@ -65,11 +65,17 @@ class Extractor:
         for info_type in ("duration", "uploader"):
             if info := resp.get(info_type):
                 msg += f"{res_f.format_line(info_type.title(), info)}\n"
-        if formats := resp.get("formats") or (
-            # Hacks
-            resp.get("entries")[0].get("formats")
-            if resp.get("_type", "") == "playlist"
-            else None
+        if formats := (
+            resp.get("formats")
+            or (
+                (
+                    entries[0].get("formats")
+                    if (entries := resp.get("entries")) and len(entries) != 0
+                    else None
+                )
+                if resp.get("_type", "") == "playlist"
+                else None
+            )
         ):
             buttons += sublists(
                 list(
