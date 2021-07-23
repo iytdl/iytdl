@@ -31,4 +31,4 @@ template: |
 
   $CHANGES
 
-  [Commits since $PREVIOUS_TAG](https://github.com/iytdl/iytdl/compare/$PREVIOUS_TAG...master)
+  [Commits since v$PREVIOUS_TAG](https://github.com/iytdl/iytdl/compare/$PREVIOUS_TAG...master)
