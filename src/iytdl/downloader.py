@@ -94,11 +94,7 @@ class Downloader:
     ):
         last_update_time = None
 
-        if isinstance(update, CallbackQuery):
-            update_type = "callback"
-        elif isinstance(update, Message):
-            update_type = "message"
-        else:
+        if not isinstance(update, (Message, CallbackQuery)):
             raise UnsupportedUpdateError
 
         def prog_func(prog_data: Dict) -> None:
@@ -140,7 +136,7 @@ class Downloader:
             else:
                 return
             if with_progress:
-                self.loop.create_task(self.progress_func(update, update_type, progress))
+                self.loop.create_task(self.progress_func(update, progress))
             last_update_time = now
 
         if downtype == "video":
@@ -152,23 +148,18 @@ class Downloader:
 
     @staticmethod
     async def progress_func(
-        update: Union[Message, CallbackQuery], update_type: str, text: str
+        update: Union[Message, CallbackQuery], text: str
     ) -> None:
         try:
-            if update_type == "callback":
-                await update.edit_message_text(
-                    text=text,
-                    parse_mode="HTML",
-                    disable_web_page_preview=True,
-                    reply_markup=None,
-                )
-            else:
-                await update.edit_text(
-                    text=text,
-                    parse_mode="HTML",
-                    disable_web_page_preview=True,
-                    reply_markup=None,
-                )
+            edit = (update.edit_text if isinstance(update, Message) 
+               else update.edit_message_text
+            )
+            await edit(
+                text=text,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=None,
+            )
         except FloodWait as f:
             await asyncio.sleep(f.x)
         except StopPropagation:
