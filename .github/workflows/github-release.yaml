@@ -27,7 +27,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v$PROJECT_VERSION
-          name: Release v$PROJECT_VERSION
+          name: "Release v${{ env.PROJECT_VERSION }}"
           draft: true
           files: ./dist/*
         env:

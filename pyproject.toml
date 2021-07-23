@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iytdl"
-version = "0.1.7"
+version = "0.1.8"
 description = "Asynchronous Standalone Inline YouTube-DL Module"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
 homepage = "https://github.com/iytdl/iytdl"
