@@ -15,14 +15,13 @@ import mutagen
 
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
+from iytdl.utils import *  # noqa ignore=F405
 from PIL import Image
 from pyrogram import Client, StopPropagation
 from pyrogram.errors import FloodWait
 from pyrogram.types import InputMediaAudio, InputMediaVideo
 from pyrogram.types.bots_and_keyboards.callback_query import CallbackQuery
 from pyrogram.types.messages_and_media.message import Message
-
-from iytdl.utils import *
 
 
 logger = logging.getLogger(__name__)

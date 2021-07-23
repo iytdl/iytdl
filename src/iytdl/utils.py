@@ -22,9 +22,8 @@ from random import sample
 from typing import Any, Awaitable, Callable, List, Optional, Union
 
 from aiohttp import ClientSession, FormData
+from iytdl.constants import *  # noqa ignore=F405
 from PIL import Image
-
-from iytdl.constants import *
 
 
 _CHAR: List[str] = list("_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy")

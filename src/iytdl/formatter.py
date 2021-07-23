@@ -5,10 +5,9 @@ import json
 from html import escape
 from typing import Any, Dict, Union
 
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-from iytdl.constants import *
+from iytdl.constants import *  # noqa ignore=F405
 from iytdl.utils import run_sync
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class ResultFormatter:

@@ -3,13 +3,25 @@ name = "iytdl"
 version = "0.1.5"
 description = "Asynchronous Standalone Inline YouTube-DL Module"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
-classifiers = [
-    "Operating System :: OS Independent",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-]
 homepage = "https://github.com/iytdl/iytdl"
 repository = "https://github.com/iytdl/iytdl"
-keywords = ["iytdl"]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "LICENSE :: OSI APPROVED :: GNU GENERAL PUBLIC LICENSE V3 (GPLV3)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development",
+]
+
+keywords = ["iytdl", "package"]
 license = "GPLv3"
 readme = "README.md"
 
