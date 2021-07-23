@@ -1,0 +1,37 @@
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  pypi_release:
+    name: Builds Using Poetry and Publishes to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install Poetry
+        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+      - name: Add Poetry to path
+        run: echo "${HOME}/.poetry/bin" >> $GITHUB_PATH
+      - name: Add version to environment vars
+        run: |
+          PROJECT_VERSION=$(poetry version --short)
+          echo "PROJECT_VERSION=$PROJECT_VERSION" >> $GITHUB_ENV
+      - name: Check if tag version matches project version
+        run: |
+          TAG=$(git describe HEAD --tags --abbrev=0)
+          echo $TAG
+          echo $PROJECT_VERSION
+          if [[ "$TAG" != "v$PROJECT_VERSION" ]]; then exit 1; fi
+      - name: Get Poetry version
+        run: poetry --version
+      - name: Check pyproject.toml validity
+        run: poetry check --no-interaction
+      - name: Setup package
+        run: poetry install --no-interaction
+      - run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
+      - name: Publish package
+        run: poetry publish --build
