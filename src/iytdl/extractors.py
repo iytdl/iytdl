@@ -29,10 +29,10 @@ class Extractor:
         buttons = [
             [
                 InlineKeyboardButton(
-                    "⭐️ BEST - 📹 Video", callback_data=f"yt_gen|{key}|best|v"
+                    "⭐️ BEST - 📹 Video", callback_data=f"yt_gen|{key}|mp4|v"
                 ),
                 InlineKeyboardButton(
-                    "⭐️ BEST - 🎧 Audio", callback_data=f"yt_gen|{key}|best|a"
+                    "⭐️ BEST - 🎧 Audio", callback_data=f"yt_gen|{key}|mp3|a"
                 ),
             ]
         ]
@@ -212,18 +212,23 @@ class Extractor:
         choice_id: str, media_type: str, yt_url: bool = True
     ) -> Tuple[str]:
         if choice_id == "mkv":
-            # default format selection
+            # Download and Merge (best video) + (best audio)
             choice_str = "bestvideo+bestaudio/best"
             disp_str = "best(video+audio)"
         elif choice_id == "mp4":
-            # Download best Webm / Mp4 format available or any other best if no mp4
-            # available
-            choice_str = (
-                "bestvideo[ext=webm]+251/bestvideo[ext=mp4]+"
-                "(258/256/140/bestaudio[ext=m4a])/"
-                "bestvideo[ext=webm]+(250/249)/best"
-            )
-            disp_str = "best(video+audio)[webm/mp4]"
+            # Download best (Webm / Mp4) format if available
+            if yt_url:
+                choice_str = (
+                    "bestvideo[ext=webm]+251/bestvideo[ext=mp4]+"
+                    "(258/256/140/bestaudio[ext=m4a])/"
+                    "bestvideo[ext=webm]+(250/249)/best[ext=mp4]/best"
+                )
+                disp_str = "best(video+audio)[webm/mp4]"
+            else:
+                choice_str = (
+                    "bestvideo[ext=mp4]+bestaudio[ext=m4a]" "/best[ext=mp4]/best"
+                )
+                disp_str = "best(video+audio)[mp4]"
         elif choice_id == "mp3":
             choice_str = "320"
             disp_str = "320 Kbps"
@@ -232,11 +237,12 @@ class Extractor:
             if media_type == "v":
                 # mp4 video quality + best compatible audio
                 if yt_url:
-                    # YouTube
-                    choice_str = f"{disp_str}+(258/256/140/bestaudio[ext=m4a])/best"
+                    choice_str = (
+                        f"{disp_str}+(258/256/140/bestaudio[ext=m4a])"
+                        "/best[ext=mp4]/best"
+                    )
                 else:
-                    # Generic sites
-                    choice_str = f"{disp_str}+bestaudio/best"
+                    choice_str = f"{disp_str}+bestaudio[ext=m4a]/best[ext=mp4]/best"
             else:  # Audio
                 choice_str = disp_str
         return choice_str, disp_str
