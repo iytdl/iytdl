@@ -3,15 +3,29 @@
 
 # iYTDL
 
-<a href="https://github.com/iytdl/iytdl/actions"><img alt="Actions Status" src="https://github.com/psf/black/workflows/Primer/badge.svg"></a>
 <a href="https://github.com/iytdl/iytdl/blob/main/LICENSE"><img alt="License: GPLv3" src="https://img.shields.io/badge/License-GPLv3-blue.svg"></a>
+<a href="https://github.com/iytdl/iytdl/actions"><img alt="Actions Status" src="https://github.com/iytdl/iytdl/actions/workflows/pypi-publish.yaml/badge.svg"></a>
 <a href="https://pypi.org/project/iytdl/"><img alt="PyPI" src="https://img.shields.io/pypi/v/iytdl"></a>
 <a href="https://pepy.tech/project/iytdl"><img alt="Downloads" src="https://pepy.tech/badge/iytdl"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 </p>
 
-> Asynchronous Standalone Inline YouTube-DL Module
+<h2 align="center"> Asynchronous Standalone Inline YouTube-DL Module</h2>
+
+## ⬇️ Installing
+
+> Install
+
+```bash
+pip3 install iytdl
+```
+
+> Upgrade
+
+```bash
+pip3 install -U iytdl
+```
 
 ## ⭐️ Features
 
@@ -23,11 +37,11 @@
 
 ## Requirements
 
-- Python >=3.8,<4
-- A Pyrogram Based Bot
-- FFmpeg
+- [Python](https://www.python.org/) >=3.8,<4
+- [Pyrogram](https://docs.pyrogram.org/) based Bot
+- [FFmpeg](http://ffmpeg.org/)
 
-## Callbacks
+## Supported Callbacks
 
 - Back and Next
 
@@ -53,8 +67,8 @@ r"^yt_extract_info\|(?P<key>[\w-]{5,11})$"
 r"yt_(?P<mode>gen|dl)\|(?P<key>[\w-]+)\|(?P<choice>[\w-]+)\|(?P<dl_type>a|v)$"
 ```
 
-## Usage
+## Usage:
 
-- Detailed usage with example
+### Example Plugin
 
 ### [iytdl_example.py](https://github.com/iytdl/iytdl/blob/master/example/iytdl_example.py)
