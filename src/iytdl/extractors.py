@@ -231,9 +231,7 @@ class Extractor:
                 )
                 disp_str = "best(video+audio)[webm/mp4]"
             else:
-                choice_str = (
-                    "bestvideo[ext=mp4]+bestaudio[ext=m4a]" "/best[ext=mp4]/best"
-                )
+                choice_str = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
                 disp_str = "best(video+audio)[mp4]"
         elif choice_id == "mp3":
             choice_str = "320"

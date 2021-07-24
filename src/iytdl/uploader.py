@@ -1,4 +1,4 @@
-__all__ = ["_PROCESS", "Uploader"]
+__all__ = ["is_cancelled", "cancel_PROGRESS", "get_PROGRESS_id", "Uploader"]
 
 import asyncio
 import logging
@@ -22,40 +22,39 @@ from pyrogram.types import InputMediaAudio, InputMediaVideo
 from pyrogram.types.bots_and_keyboards.callback_query import CallbackQuery
 from pyrogram.types.messages_and_media.message import Message
 
+from iytdl.processes import Process
 from iytdl.utils import *  # noqa ignore=F405
 
 
 logger = logging.getLogger(__name__)
-_PROCESS: Dict[str, Tuple[int, int]] = {}
+_PROGRESS: Dict[str, Tuple[int, int]] = {}
 
 
 async def upload_progress(
     current: int,
     total: int,
-    update: Union[Message, CallbackQuery],
+    process: Process,
     filename: str,
     mode: str = "upload",
     edit_rate: int = 8,
 ):
-    if update.message:
-        edit_func = update.edit_text
-        process_id = f"{update.message.chat.id}.{update.message.message_id}"
-    else:
-        edit_func = update.edit_message_text
-        process_id = update.id
+    if process.is_cancelled:
+        # Stop Uploading
+        raise StopPropagation
+
     if current == total:
         try:
-            await edit_func(f"`finalizing {mode} process ...`")
+            await process.edit(f"`finalizing {mode} process ...`")
         except FloodWait as f_w:
             await asyncio.sleep(f_w.x)
         return
     now = int(time.time())
-    if process_id not in _PROCESS:
-        _PROCESS[process_id] = (now, now)
-    start, last_update_time = _PROCESS[process_id]
+    if process.id not in _PROGRESS:
+        _PROGRESS[process.id] = (now, now)
+    start, last_update_time = _PROGRESS[process.id]
     # ------------------------------------ #
     if (now - last_update_time) >= edit_rate:
-        _PROCESS[process_id] = (start, now)
+        _PROGRESS[process.id] = (start, now)
         # Only edit message once every 8 seconds to avoid ratelimits
         after = now - start
         speed = current / after
@@ -73,7 +72,7 @@ async def upload_progress(
 <b>ETA:</b>  <code>{time_formater(eta)}</code>
 """
         try:
-            await edit_func(progress, reply_markup=None)
+            await process.edit(progress, reply_markup=process.cancel_markup)
         except FloodWait as f:
             await asyncio.sleep(f.x)
         except StopPropagation:
@@ -192,20 +191,16 @@ class Uploader:
                 caption = f"<b><a href={link}>{mkwargs['file_name']}</a></b>"
             else:
                 caption = f"<b>{mkwargs['file_name']}</b>"
-            edit_func = (
-                update.edit_media
-                if isinstance(update, Message)
-                else update.edit_message_media
-            )
+            process = Process(update)
             if downtype == "video":
-                await self.__upload_video(client, update, caption, mkwargs, edit_func)
+                await self.__upload_video(client, update, caption, mkwargs, process)
             if downtype == "audio":
-                await self.__upload_audio(client, update, caption, mkwargs, edit_func)
+                await self.__upload_audio(client, update, caption, mkwargs, process)
 
     async def __upload_video(
         self,
         client: Client,
-        update: Union[CallbackQuery, Message],
+        process: Process,
         caption: str,
         mkwargs: Dict[str, Any],
         edit_func: Callable,
@@ -221,7 +216,7 @@ class Uploader:
             parse_mode="HTML",
             disable_notification=True,
             progress=upload_progress,
-            progress_args=(update, mkwargs["file_name"]),
+            progress_args=(process, mkwargs["file_name"]),
             **mkwargs,
         )
         if uploaded.video:
@@ -229,13 +224,13 @@ class Uploader:
                 media=InputMediaVideo(
                     uploaded.video.file_id, caption=uploaded.caption.html
                 ),
-                reply_markup=None,
+                reply_markup=process.cancel_markup,
             )
 
     async def __upload_audio(
         self,
         client: Client,
-        update: Union[CallbackQuery, Message],
+        process: Process,
         caption: str,
         mkwargs: Dict[str, Any],
         edit_func: Callable,
@@ -246,7 +241,7 @@ class Uploader:
             parse_mode="HTML",
             disable_notification=True,
             progress=upload_progress,
-            progress_args=(update, mkwargs["file_name"]),
+            progress_args=(process, mkwargs["file_name"]),
             **mkwargs,
         )
         if uploaded.audio:
@@ -254,5 +249,5 @@ class Uploader:
                 media=InputMediaAudio(
                     uploaded.audio.file_id, caption=uploaded.caption.html
                 ),
-                reply_markup=None,
+                reply_markup=process.cancel_markup,
             )

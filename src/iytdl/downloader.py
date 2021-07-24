@@ -16,7 +16,7 @@ from pyrogram.errors import FloodWait
 from pyrogram.types import CallbackQuery, Message
 from youtube_dl.utils import DownloadError, GeoRestrictedError
 
-from iytdl.exceptions import UnsupportedUpdateError
+from iytdl.processes import Process
 from iytdl.utils import *
 
 
@@ -97,8 +97,11 @@ class Downloader:
     ):
         last_update_time = None
 
-        if not isinstance(update, (Message, CallbackQuery)):
-            raise UnsupportedUpdateError
+        process = Process(update)
+
+        if process.is_cancelled:
+            # Cancel Download
+            raise StopPropagation
 
         def prog_func(prog_data: Dict) -> None:
             nonlocal last_update_time
@@ -139,7 +142,7 @@ class Downloader:
             else:
                 return
             if with_progress:
-                self.loop.create_task(self.progress_func(update, progress))
+                self.loop.create_task(self.progress_func(process, progress))
             last_update_time = now
 
         if downtype == "video":
@@ -150,18 +153,13 @@ class Downloader:
             raise TypeError(f"'{downtype}' is Unsupported !")
 
     @staticmethod
-    async def progress_func(update: Union[Message, CallbackQuery], text: str) -> None:
+    async def progress_func(process: Process, text: str) -> None:
         try:
-            edit = (
-                update.edit_text
-                if isinstance(update, Message)
-                else update.edit_message_text
-            )
-            await edit(
+            await process.edit(
                 text=text,
                 parse_mode="HTML",
                 disable_web_page_preview=True,
-                reply_markup=None,
+                reply_markup=process.cancel_markup,
             )
         except FloodWait as f:
             await asyncio.sleep(f.x)
