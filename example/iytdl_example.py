@@ -83,7 +83,7 @@ class YoutubeDL(mod.Module):
     async def extract_info(self, c_q: CallbackQuery):
         await c_q.answer()
         key = c_q.matches[0].group("key")
-        # After answeing InlineQuery now the extract the info and edit the messsage
+        # After answering InlineQuery now the extract the info and edit the messsage
         if data := await self.ytdl.extract_info_from_key(key):
             # Youtube Link i.e no need to edit Image
             if len(key) == 11:
