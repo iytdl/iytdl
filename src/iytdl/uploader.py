@@ -210,6 +210,11 @@ class Uploader:
         mkwargs: Dict[str, Any],
         edit_func: Callable,
     ):
+
+        if not mkwargs.get("thumb") and (duration := mkwargs.get("duration")):
+            ttl = duration // 2
+            mkwargs["thumb"] = await take_screen_shot(mkwargs["video"], ttl)
+
         uploaded = await client.send_video(
             chat_id=self.log_group_id,
             caption=f"📹  {caption}",
