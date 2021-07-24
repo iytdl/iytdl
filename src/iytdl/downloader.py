@@ -11,12 +11,12 @@ from typing import Dict, Union
 
 import youtube_dl
 
-from pyrogram import StopPropagation
+from pyrogram import ContinuePropagation, StopPropagation, StopTransmission
 from pyrogram.errors import FloodWait
 from pyrogram.types import CallbackQuery, Message
 from youtube_dl.utils import DownloadError, GeoRestrictedError
 
-from iytdl.exceptions import UnsupportedUpdateError
+from iytdl.processes import Process
 from iytdl.utils import *
 
 
@@ -97,13 +97,17 @@ class Downloader:
     ):
         last_update_time = None
 
-        if not isinstance(update, (Message, CallbackQuery)):
-            raise UnsupportedUpdateError
+        process = Process(update)
 
         def prog_func(prog_data: Dict) -> None:
             nonlocal last_update_time
             now = int(time.time())
             # Only edit message once every 8 seconds to avoid ratelimits
+
+            if process.is_cancelled:
+                logger.warning("Download process is Cancelled")
+                raise StopTransmission
+
             if prog_data.get("status") == "finished":
                 progress = "🔄  Download finished, Uploading..."
             elif last_update_time is None or (now - last_update_time) >= edit_rate:
@@ -139,7 +143,7 @@ class Downloader:
             else:
                 return
             if with_progress:
-                self.loop.create_task(self.progress_func(update, progress))
+                self.loop.create_task(self.progress_func(process, progress))
             last_update_time = now
 
         if downtype == "video":
@@ -150,22 +154,17 @@ class Downloader:
             raise TypeError(f"'{downtype}' is Unsupported !")
 
     @staticmethod
-    async def progress_func(update: Union[Message, CallbackQuery], text: str) -> None:
+    async def progress_func(process: Process, text: str) -> None:
         try:
-            edit = (
-                update.edit_text
-                if isinstance(update, Message)
-                else update.edit_message_text
-            )
-            await edit(
+            await process.edit(
                 text=text,
                 parse_mode="HTML",
                 disable_web_page_preview=True,
-                reply_markup=None,
+                reply_markup=process.cancel_markup,
             )
         except FloodWait as f:
             await asyncio.sleep(f.x)
-        except StopPropagation:
-            raise StopPropagation
+        except (StopPropagation, StopTransmission, ContinuePropagation) as p_e:
+            raise p_e
         except Exception as e:
             logger.error(format_exception(e))

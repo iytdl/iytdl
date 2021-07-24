@@ -7,7 +7,8 @@ from pyrogram.types import (
     InputMediaPhoto,
 )
 
-from iytdl import iYTDL
+# iytdl imports
+from iytdl import Process, iYTDL
 from iytdl.constants import YT_VID_URL
 from iytdl.utils import rnd_key
 
@@ -82,7 +83,7 @@ class YoutubeDL(mod.Module):
     async def extract_info(self, c_q: CallbackQuery):
         await c_q.answer()
         key = c_q.matches[0].group("key")
-        # After answering the InlineQuery now extract the info and edit the messsage
+        # After answeing InlineQuery now the extract the info and edit the messsage
         if data := await self.ytdl.extract_info_from_key(key):
             # Youtube Link i.e no need to edit Image
             if len(key) == 11:
@@ -106,6 +107,7 @@ class YoutubeDL(mod.Module):
         r"yt_(?P<mode>gen|dl)\|(?P<key>[\w-]+)\|(?P<choice>[\w-]+)\|(?P<dl_type>a|v)$"
     )
     async def yt_download(self, c_q: CallbackQuery):
+        await c_q.answer()
         data = c_q.matches[0].group
 
         if data("mode") == "gen":
@@ -145,3 +147,14 @@ class YoutubeDL(mod.Module):
             update=c_q,
             link=video_link,
         )
+
+    @OnCallback(r"^yt_cancel\|(?P<process_id>[\w\.]+)$")
+    async def yt_cancel(self, c_q: CallbackQuery):
+        await c_q.answer("Trying to Cancel Process..")
+        process_id = c_q.matches[0].group("process_id")
+        Process.cancel_id(process_id)
+        if c_q.message:
+            await c_q.message.delete()
+        else:
+            await c_q.edit_message_text("`Stopped Successfully`")
+        Process.cancel_id(process_id)
