@@ -67,6 +67,12 @@ r"^yt_extract_info\|(?P<key>[\w-]{5,11})$"
 r"yt_(?P<mode>gen|dl)\|(?P<key>[\w-]+)\|(?P<choice>[\w-]+)\|(?P<dl_type>a|v)$"
 ```
 
+- Cancel
+
+```python
+r"^yt_cancel\|(?P<process_id>[\w\.]+)$"
+```
+
 ## Usage:
 
 ### Example Plugin

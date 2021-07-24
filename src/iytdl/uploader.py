@@ -9,14 +9,14 @@ import time
 from io import BytesIO
 from math import floor
 from pathlib import Path, PurePath
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import mutagen
 
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
-from pyrogram import Client, StopPropagation
+from pyrogram import Client, ContinuePropagation, StopPropagation, StopTransmission
 from pyrogram.errors import FloodWait
 from pyrogram.types import InputMediaAudio, InputMediaVideo
 from pyrogram.types.bots_and_keyboards.callback_query import CallbackQuery
@@ -33,14 +33,16 @@ _PROGRESS: Dict[str, Tuple[int, int]] = {}
 async def upload_progress(
     current: int,
     total: int,
+    client: Client,
     process: Process,
     filename: str,
     mode: str = "upload",
     edit_rate: int = 8,
 ):
     if process.is_cancelled:
+        logger.warning("Upload process is Cancelled")
         # Stop Uploading
-        raise StopPropagation
+        await client.stop_transmission()
 
     if current == total:
         try:
@@ -75,8 +77,8 @@ async def upload_progress(
             await process.edit(progress, reply_markup=process.cancel_markup)
         except FloodWait as f:
             await asyncio.sleep(f.x)
-        except StopPropagation:
-            raise StopPropagation
+        except (StopPropagation, StopTransmission, ContinuePropagation) as p_e:
+            raise p_e
         except Exception as e:
             logger.error(format_exception(e))
 
@@ -193,9 +195,9 @@ class Uploader:
                 caption = f"<b>{mkwargs['file_name']}</b>"
             process = Process(update)
             if downtype == "video":
-                await self.__upload_video(client, update, caption, mkwargs, process)
+                await self.__upload_video(client, process, caption, mkwargs)
             if downtype == "audio":
-                await self.__upload_audio(client, update, caption, mkwargs, process)
+                await self.__upload_audio(client, process, caption, mkwargs)
 
     async def __upload_video(
         self,
@@ -203,7 +205,6 @@ class Uploader:
         process: Process,
         caption: str,
         mkwargs: Dict[str, Any],
-        edit_func: Callable,
     ):
 
         if not mkwargs.get("thumb") and (duration := mkwargs.get("duration")):
@@ -216,15 +217,16 @@ class Uploader:
             parse_mode="HTML",
             disable_notification=True,
             progress=upload_progress,
-            progress_args=(process, mkwargs["file_name"]),
+            progress_args=(client, process, mkwargs["file_name"]),
             **mkwargs,
         )
-        if uploaded.video:
-            await edit_func(
+        # None when process is cancelled
+        if uploaded and uploaded.video and not process.is_cancelled:
+            await process.edit_media(
                 media=InputMediaVideo(
                     uploaded.video.file_id, caption=uploaded.caption.html
                 ),
-                reply_markup=process.cancel_markup,
+                reply_markup=None,
             )
 
     async def __upload_audio(
@@ -233,7 +235,6 @@ class Uploader:
         process: Process,
         caption: str,
         mkwargs: Dict[str, Any],
-        edit_func: Callable,
     ):
         uploaded = await client.send_audio(
             chat_id=self.log_group_id,
@@ -241,13 +242,14 @@ class Uploader:
             parse_mode="HTML",
             disable_notification=True,
             progress=upload_progress,
-            progress_args=(process, mkwargs["file_name"]),
+            progress_args=(client, process, mkwargs["file_name"]),
             **mkwargs,
         )
-        if uploaded.audio:
-            await edit_func(
+        # None when process is cancelled
+        if uploaded and uploaded.audio and not process.is_cancelled:
+            await process.edit_media(
                 media=InputMediaAudio(
                     uploaded.audio.file_id, caption=uploaded.caption.html
                 ),
-                reply_markup=process.cancel_markup,
+                reply_markup=None,
             )

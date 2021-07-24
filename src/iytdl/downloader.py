@@ -11,7 +11,7 @@ from typing import Dict, Union
 
 import youtube_dl
 
-from pyrogram import StopPropagation
+from pyrogram import ContinuePropagation, StopPropagation, StopTransmission
 from pyrogram.errors import FloodWait
 from pyrogram.types import CallbackQuery, Message
 from youtube_dl.utils import DownloadError, GeoRestrictedError
@@ -99,14 +99,15 @@ class Downloader:
 
         process = Process(update)
 
-        if process.is_cancelled:
-            # Cancel Download
-            raise StopPropagation
-
         def prog_func(prog_data: Dict) -> None:
             nonlocal last_update_time
             now = int(time.time())
             # Only edit message once every 8 seconds to avoid ratelimits
+
+            if process.is_cancelled:
+                logger.warning("Download process is Cancelled")
+                raise StopTransmission
+
             if prog_data.get("status") == "finished":
                 progress = "🔄  Download finished, Uploading..."
             elif last_update_time is None or (now - last_update_time) >= edit_rate:
@@ -163,7 +164,7 @@ class Downloader:
             )
         except FloodWait as f:
             await asyncio.sleep(f.x)
-        except StopPropagation:
-            raise StopPropagation
+        except (StopPropagation, StopTransmission, ContinuePropagation) as p_e:
+            raise p_e
         except Exception as e:
             logger.error(format_exception(e))
