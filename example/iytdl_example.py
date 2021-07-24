@@ -157,4 +157,3 @@ class YoutubeDL(mod.Module):
             await c_q.message.delete()
         else:
             await c_q.edit_message_text("`Stopped Successfully`")
-        Process.cancel_id(process_id)

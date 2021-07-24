@@ -13,6 +13,7 @@ import youtube_dl
 
 from pyrogram import ContinuePropagation, StopPropagation, StopTransmission
 from pyrogram.errors import FloodWait
+from pyrogram.errors.exceptions.bad_request_400 import MessageNotModified
 from pyrogram.types import CallbackQuery, Message
 from youtube_dl.utils import DownloadError, GeoRestrictedError
 
@@ -38,8 +39,8 @@ class Downloader:
             "writethumbnail": True,
             "prefer_ffmpeg": True,
             "postprocessors": [{"key": "FFmpegMetadata"}],
-            "quiet": True,
-            "logtostderr": False,
+            "quiet": self.silent,
+            "logtostderr": self.silent,
         }
         return await self.ytdownloader(url, options)
 
@@ -65,8 +66,8 @@ class Downloader:
                 {"key": "EmbedThumbnail"},
                 {"key": "FFmpegMetadata"},
             ],
-            "quiet": True,
-            "logtostderr": False,
+            "quiet": self.silent,
+            "logtostderr": self.silent,
         }
         return await self.ytdownloader(url, options)
 
@@ -166,5 +167,7 @@ class Downloader:
             await asyncio.sleep(f.x)
         except (StopPropagation, StopTransmission, ContinuePropagation) as p_e:
             raise p_e
+        except MessageNotModified:
+            pass
         except Exception as e:
             logger.error(format_exception(e))

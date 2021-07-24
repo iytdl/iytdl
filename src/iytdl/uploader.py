@@ -18,6 +18,7 @@ from hachoir.parser import createParser
 from PIL import Image
 from pyrogram import Client, ContinuePropagation, StopPropagation, StopTransmission
 from pyrogram.errors import FloodWait
+from pyrogram.errors.exceptions.bad_request_400 import MessageNotModified
 from pyrogram.types import InputMediaAudio, InputMediaVideo
 from pyrogram.types.bots_and_keyboards.callback_query import CallbackQuery
 from pyrogram.types.messages_and_media.message import Message
@@ -45,8 +46,11 @@ async def upload_progress(
         await client.stop_transmission()
 
     if current == total:
+        if process.id not in _PROGRESS:
+            return
+        del _PROGRESS[process.id]
         try:
-            await process.edit(f"`finalizing {mode} process ...`")
+            await process.edit(f"`Finalizing {mode} process ...`")
         except FloodWait as f_w:
             await asyncio.sleep(f_w.x)
         return
@@ -79,6 +83,8 @@ async def upload_progress(
             await asyncio.sleep(f.x)
         except (StopPropagation, StopTransmission, ContinuePropagation) as p_e:
             raise p_e
+        except MessageNotModified:
+            pass
         except Exception as e:
             logger.error(format_exception(e))
 
