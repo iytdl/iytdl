@@ -118,7 +118,7 @@ async def upload_to_telegraph(http: ClientSession, url: str) -> Optional[str]:
     await run_sync(os.remove)(f_name)
 
 
-async def take_screen_shot(video_file: str, ttl) -> Optional[str]:
+async def take_screen_shot(video_file: str, ttl: int) -> Optional[str]:
     """Generate Thumbnail from video"""
     file = Path(video_file)
     ss_path = file.parent.joinpath(f"{file.stem}.jpg")
