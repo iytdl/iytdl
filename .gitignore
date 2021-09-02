@@ -146,3 +146,4 @@ vendor/
 .cache
 *.db
 downloads/
+.vscode/settings.json

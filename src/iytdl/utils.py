@@ -5,14 +5,12 @@ __all__ = [
     "time_formater",
     "take_screen_shot",
     "rnd_key",
-    "format_exception",
 ]
 
 import asyncio
 import logging
 import os
 import tempfile
-import traceback
 
 from datetime import timedelta
 from functools import partial, wraps
@@ -130,9 +128,3 @@ async def take_screen_shot(video_file: str, ttl: int) -> Optional[str]:
     if stderr := await process.communicate()[1]:
         logger.error(stderr.decode("utf-8", "replace").strip())
     return str(ss_path) if ss_path.is_file() else None
-
-
-def format_exception(exc) -> str:
-    return "".join(
-        traceback.format_exception(etype=type(exc), value=exc, tb=exc.__traceback__)
-    )

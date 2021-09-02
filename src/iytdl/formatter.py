@@ -7,6 +7,8 @@ from typing import Any, Dict, Union
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+import iytdl
+
 from iytdl.constants import *  # noqa ignore=F405
 
 
@@ -36,7 +38,22 @@ class ResultFormatter:
             setattr(self, key, value or None)
 
     @classmethod
-    async def parse(cls, yt_class, raw_result: Dict[str, Any]) -> Dict[str, str]:
+    async def parse(
+        cls: "ResultFormatter", yt_class: "iytdl.iYTDL", raw_result: Dict[str, Any]
+    ) -> Dict[str, str]:
+        """Formats YouTube Search Results
+
+        Parameters:
+        ----------
+            - cls (`ResultFormatter`): new class instance.
+            - yt_class (`iytdl.iYTDL`).
+            - raw_result (`Dict[str, Any]`): Unformatted results.
+
+        Returns:
+        -------
+            `Dict[str, str]`: On Success
+        """
+
         yt_id = raw_result.get("id")
         return cls(
             yt_id=yt_id,
@@ -58,10 +75,12 @@ class ResultFormatter:
 
     @staticmethod
     def format_line(key: str, value: Union[str, int, None]) -> str:
+        """Pretty format line"""
         return f"<b>❯  {key}</b> : {value or 'N/A'}"
 
     @property
     def msg(self) -> str:
+        """Message Text"""
         out = f"<a href={YT_VID_URL}{self.yt_id}><b>{escape(self.title)}</b></a>\n"
         if self.body:
             out += f"<pre>{escape(self.body)}</pre>"
@@ -80,6 +99,7 @@ class ResultFormatter:
         return out
 
     def list_view(self, num: int) -> str:
+        """List View"""
         return (
             f"<img src={self.thumb}><b><a href={YT_VID_URL}{self.yt_id}>"
             f"{num}. {escape(self.title or 'N/A')}</a></b>"
@@ -92,6 +112,19 @@ class ResultFormatter:
 def gen_search_markup(
     key: str, yt_id: str, total: int, page: int = 1
 ) -> InlineKeyboardMarkup:
+    """Get Buttons for search results
+
+    Parameters:
+    ----------
+        - key (`str`): Search result unique key.
+        - yt_id (`str`): YouTube video ID.
+        - total (`int`): Total no. of search results.
+        - page (`int`, optional): Page number. (Defaults to `1`)
+
+    Returns:
+    -------
+        `InlineKeyboardMarkup`: for reply_markup
+    """
 
     buttons = [
         [

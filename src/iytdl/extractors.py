@@ -27,6 +27,18 @@ class Extractor:
 
     @run_sync
     def generic_extractor(self, key: str, url: str) -> Optional[SearhResult]:
+        """Generic extractor for URLs other than YouTube
+        [more info](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
+
+        Parameters:
+        ----------
+            - key (`str`): Unique key for Callback.
+            - url (`str`): Http URL.
+
+        Returns:
+        -------
+            `Optional[SearhResult]`: On Success
+        """
         # passing key as we can't pass the entire url in callback_data
         buttons = [
             [
@@ -110,6 +122,16 @@ class Extractor:
         )
 
     def filter_generic_formats(self, raw_formats: Dict) -> Dict:
+        """Filter Formats Based on 'tbr', 'width' and 'acodec'
+
+        Parameters:
+        ----------
+            - raw_formats (`Dict`): Raw youtube-dl formats.
+
+        Returns:
+        -------
+            `Dict`: Filtered Formats
+        """
         widthset = set()
 
         def qual_filter(frmt) -> bool:
@@ -130,7 +152,17 @@ class Extractor:
         return frmt_list if len(frmt_list) > 1 else raw_formats
 
     @run_sync
-    def get_download_button(self, yt_id: str):
+    def get_download_button(self, yt_id: str) -> SearhResult:
+        """Generate Inline Buttons for YouTube Video
+
+        Parameters:
+        ----------
+            - yt_id (`str`): YouTube video key.
+
+        Returns:
+        -------
+            `SearhResult`: ~iytdl.types.SearhResult
+        """
         buttons = [
             [
                 InlineKeyboardButton(
@@ -219,6 +251,18 @@ class Extractor:
     def get_choice_by_id(
         choice_id: str, media_type: str, yt_url: bool = True
     ) -> Tuple[str]:
+        """youtube-dl downloader formats for video / audio
+
+        Parameters:
+        ----------
+            - choice_id (`str`): Format choice.
+            - media_type (`str`): `"video"` or `"audio"`.
+            - yt_url (`bool`, optional): If URL is from https://www.youtube.com/. (Defaults to `True`)
+
+        Returns:
+        -------
+            `Tuple[str]`: (Full Format str, Display str)
+        """
         if choice_id == "mkv":
             # Download and Merge (best video) + (best audio)
             choice_str = "(bestvideo+bestaudio/best)[filesize<?1950M]"

@@ -7,7 +7,7 @@ import os
 import time
 
 from math import floor
-from typing import Dict, Union
+from typing import Any, Callable, Dict, Union
 
 import yt_dlp as youtube_dl
 
@@ -26,20 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class Downloader:
-    async def video_downloader(self, url: str, uid: str, rnd_key: str, prog_func):
-        """YouTubeDL Video Downloader
+    async def video_downloader(
+        self, url: str, uid: str, rnd_key: str, prog_func: Callable
+    ) -> Union[int, str]:
 
-        Parameters:
-        ----------
-            - url (`str`): youtube-dl supported URL.
-            - uid (`str`): format.
-            - rnd_key (`str`): Unique Key.
-            - prog_func (`[type]`): progress Hook.
-
-        Returns:
-        -------
-            `[type]`: [description]
-        """
         options = {
             "addmetadata": True,
             "geo_bypass": True,
@@ -61,8 +51,9 @@ class Downloader:
             options.update(ext_dl._export())
         return await self.ytdownloader(url, options)
 
-    async def audio_downloader(self, url: str, uid: str, rnd_key: str, prog_func):
-        logger.info(f"[Seleced Audio Quality => {uid}]")
+    async def audio_downloader(
+        self, url: str, uid: str, rnd_key: str, prog_func: Callable
+    ) -> Union[int, str]:
         options = {
             "outtmpl": os.path.join(
                 str(self.download_path), rnd_key, "%(title)s-%(format)s.%(ext)s"
@@ -91,7 +82,7 @@ class Downloader:
         return await self.ytdownloader(url, options)
 
     @run_sync
-    def ytdownloader(self, url: str, options: Dict):
+    def ytdownloader(self, url: str, options: Dict[str, Any]) -> Union[int, str]:
         try:
             with youtube_dl.YoutubeDL(options) as ytdl:
                 return ytdl.download([url])
@@ -213,5 +204,5 @@ class Downloader:
             raise p_e
         except (ContinuePropagation, MessageNotModified):
             pass
-        except Exception as e:
-            logger.error(format_exception(e))
+        except Exception:
+            logger.exception("Progress")
