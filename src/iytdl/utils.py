@@ -36,8 +36,9 @@ def run_sync(func: Callable[..., Any]) -> Awaitable[Any]:
 
     @wraps(func)
     async def wrapper(*args: Any, **kwargs: Any):
-        loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(None, partial(func, *args, **kwargs))
+        return await asyncio.get_running_loop().run_in_executor(
+            None, partial(func, *args, **kwargs)
+        )
 
     return wrapper
 

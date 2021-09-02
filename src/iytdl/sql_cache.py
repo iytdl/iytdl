@@ -14,11 +14,21 @@ class AioSQLiteDB:
     cur: aiosqlite.Cursor
 
     def __init__(self, db_name: str, clean: bool = False) -> None:
+        """Create / Load Cache
+
+        Parameters:
+        ----------
+            db_name (`str`): Cache file name.
+
+            clean (`bool`, optional): Delete old cache and create new. (Defaults to `False`)
+
+        """
         if clean and os.path.isfile(db_name):
             os.remove(db_name)
         self.db_name = db_name
 
     async def _init(self) -> None:
+        """Async init"""
         try:
             self.con = await aiosqlite.connect(self.db_name)
         except aiosqlite.OperationalError:
@@ -30,6 +40,7 @@ class AioSQLiteDB:
         await self.__init_tables()
 
     async def __init_tables(self) -> None:
+        """Create required Tables"""
         await self.cur.execute(
             """
 CREATE TABLE IF NOT EXISTS url_cache (
@@ -41,6 +52,15 @@ CREATE TABLE IF NOT EXISTS url_cache (
         await self.con.commit()
 
     async def set_key(self, key: str, value: List[Dict[str, Any]]) -> None:
+        """Set Key in Cache
+
+        Parameters:
+        ----------
+            key (`str`): Unique Key.
+
+            value (`List[Dict[str, Any]]`): YT Search Data.
+
+        """
         await self.cur.execute(
             f"""
 CREATE TABLE IF NOT EXISTS {key} (
@@ -74,6 +94,18 @@ CREATE TABLE IF NOT EXISTS {key} (
     async def get_key(
         self, key: str, index: Optional[int] = None
     ) -> Union[Tuple[int, str, None], Dict[str, str], None]:
+        """Get Data saved in Cache from Key
+
+        Parameters:
+        ----------
+            key (`str`): Unique Key.
+
+            index (`Optional[int]`, optional): Result index. (Defaults to `None`)
+
+        Returns:
+        -------
+            Union[Tuple[int, str, None], Dict[str, str], None]
+        """
         try:
             await self.cur.execute(f"SELECT * FROM {key}")
         except aiosqlite.OperationalError:
@@ -88,6 +120,17 @@ CREATE TABLE IF NOT EXISTS {key} (
             )
 
     async def save_url(self, url: str) -> str:
+        """Save Url and get Key.
+
+        Parameters:
+        ----------
+            url (`str`): Http URL.
+
+        Returns:
+        -------
+            str: Unique Key
+
+        """
         # Check Existing Key
         await self.cur.execute("SELECT key FROM url_cache WHERE url = ?", (url,))
         if old_key := await self.cur.fetchone():
@@ -101,9 +144,21 @@ CREATE TABLE IF NOT EXISTS {key} (
         return key
 
     async def get_url(self, key: str) -> Optional[str]:
+        """Get Saved URL from Key
+
+        Parameters:
+        ----------
+            key (`str`): Unique Key.
+
+        Returns:
+        -------
+            Optional[str]: URL if found
+
+        """
         await self.cur.execute("SELECT url FROM url_cache WHERE key = ?", (key,))
         if value := await self.cur.fetchone():
             return value[0]
 
     async def close(self) -> None:
+        """Close Cache File"""
         await self.con.close()

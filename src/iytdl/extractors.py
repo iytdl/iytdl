@@ -5,10 +5,12 @@ import logging
 from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 
-import youtube_dl
+import yt_dlp as youtube_dl
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from youtube_dl.utils import DownloadError, ExtractorError, UnsupportedError
+
+# from youtube_dl.utils import DownloadError, ExtractorError, UnsupportedError
+from yt_dlp.utils import DownloadError, ExtractorError, UnsupportedError
 
 from iytdl.constants import YT_VID_URL
 from iytdl.formatter import ResultFormatter as res_f
@@ -219,20 +221,17 @@ class Extractor:
     ) -> Tuple[str]:
         if choice_id == "mkv":
             # Download and Merge (best video) + (best audio)
-            choice_str = "bestvideo+bestaudio/best"
-            disp_str = "best(video+audio)"
+            choice_str = "(bestvideo+bestaudio/best)[filesize<?1950M]"
+            disp_str = "Best (video+audio)"
         elif choice_id == "mp4":
-            # Download best (Webm / Mp4) format if available
+            # Download best Mp4 format if available
+            # Webm is not supported by Telegram anymore :(
             if yt_url:
-                choice_str = (
-                    "bestvideo[ext=webm]+251/bestvideo[ext=mp4]+"
-                    "(258/256/140/bestaudio[ext=m4a])/"
-                    "bestvideo[ext=webm]+(250/249)/best[ext=mp4]/best"
-                )
-                disp_str = "best(video+audio)[webm/mp4]"
+                choice_str = "(bestvideo[ext=mp4]+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best)[filesize<?1950M]"
+                disp_str = "Best MP4"
             else:
-                choice_str = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
-                disp_str = "best(video+audio)[mp4]"
+                choice_str = "(bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best)[filesize<?1950M]"
+                disp_str = "Best MP4 (video+audio)"
         elif choice_id == "mp3":
             choice_str = "320"
             disp_str = "320 Kbps"
@@ -241,12 +240,9 @@ class Extractor:
             if media_type == "v":
                 # mp4 video quality + best compatible audio
                 if yt_url:
-                    choice_str = (
-                        f"{disp_str}+(258/256/140/bestaudio[ext=m4a])"
-                        "/best[ext=mp4]/best"
-                    )
+                    choice_str = f"({disp_str}+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best)[filesize<?1950M]"
                 else:
-                    choice_str = f"{disp_str}+bestaudio[ext=m4a]/best[ext=mp4]/best"
+                    choice_str = f"({disp_str}+bestaudio[ext=m4a]/best[ext=mp4]/best)[filesize<?1950M]"
             else:  # Audio
                 choice_str = disp_str
         return choice_str, disp_str

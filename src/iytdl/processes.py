@@ -12,13 +12,19 @@ from pyrogram.types import (
 from iytdl.exceptions import UnsupportedUpdateError
 
 
-# Cancel Culture
-
-
 class Process:
     cancelled_ids: Set[str] = set()
 
     def __init__(self, update: Union[Message, CallbackQuery]) -> None:
+        """
+        Parameters:
+        ----------
+            update (`Union[Message, CallbackQuery]`)
+
+        Raises:
+        ------
+            UnsupportedUpdateError: In case of unsupported update.
+        """
 
         if not isinstance(update, (Message, CallbackQuery)):
             raise UnsupportedUpdateError
@@ -38,18 +44,39 @@ class Process:
 
     @classmethod
     def cancel_id(cls, process_id: str) -> None:
+        """Cancel Upload / Download Process by ID
+
+        Parameters:
+        ----------
+            process_id (`str`): Unique ID.
+
+        """
         cls.cancelled_ids.add(process_id)
 
     @classmethod
     def remove_id(cls, process_id: str) -> None:
+        """Remove cancelled ID
+
+        Parameters:
+        ----------
+            process_id (`str`): Unique ID.
+
+        """
         cls.cancelled_ids.remove(process_id)
 
     @property
     def cancel(self) -> None:
+        """Cancel process"""
         self.cancelled_ids.add(self.id)
 
     @property
     def is_cancelled(self) -> bool:
+        """Check if process is cancelled
+
+        Returns:
+        -------
+            bool: True if cancelled else False
+        """
         return self.id in self.cancelled_ids
 
     @property

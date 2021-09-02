@@ -11,7 +11,7 @@
 
 </p>
 
-<h2 align="center"> Asynchronous Standalone Inline YouTube-DL Module</h2>
+<h2 align="center"> Aysnc Inline YouTube-DL for Pyrogram</h2>
 
 ## ⬇️ Installing
 
@@ -37,6 +37,7 @@ pip3 install -U iytdl
 
 ## Requirements
 
+- [YT-DLP](https://github.com/yt-dlp/yt-dlp)
 - [Python](https://www.python.org/) >=3.8,<4
 - [Pyrogram](https://docs.pyrogram.org/) based Bot
 - [FFmpeg](http://ffmpeg.org/)

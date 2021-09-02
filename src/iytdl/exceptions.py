@@ -4,3 +4,7 @@ class NoResultFoundError(Exception):
 
 class UnsupportedUpdateError(TypeError):
     pass
+
+
+class DownloadError(Exception):
+    pass

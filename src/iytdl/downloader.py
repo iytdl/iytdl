@@ -9,13 +9,14 @@ import time
 from math import floor
 from typing import Dict, Union
 
-import youtube_dl
+import yt_dlp as youtube_dl
 
 from pyrogram import ContinuePropagation, StopPropagation, StopTransmission
-from pyrogram.errors import FloodWait
-from pyrogram.errors.exceptions.bad_request_400 import MessageNotModified
+from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import CallbackQuery, Message
-from youtube_dl.utils import DownloadError, GeoRestrictedError
+
+# from youtube_dl.utils import DownloadError, GeoRestrictedError
+from yt_dlp.utils import DownloadError, GeoRestrictedError
 
 from iytdl.processes import Process
 from iytdl.utils import *
@@ -42,6 +43,9 @@ class Downloader:
             "quiet": self.silent,
             "logtostderr": self.silent,
         }
+
+        if (ext_dl := self.external_downloader) is not None:
+            options.update(ext_dl._export())
         return await self.ytdownloader(url, options)
 
     async def audio_downloader(self, url: str, uid: str, rnd_key: str, prog_func):
@@ -69,13 +73,15 @@ class Downloader:
             "quiet": self.silent,
             "logtostderr": self.silent,
         }
+        if (ext_dl := self.external_downloader) is not None:
+            options.update(ext_dl._export())
         return await self.ytdownloader(url, options)
 
     @run_sync
     def ytdownloader(self, url: str, options: Dict):
         try:
             with youtube_dl.YoutubeDL(options) as ytdl:
-                out = ytdl.download([url])
+                return ytdl.download([url])
         except DownloadError:
             logger.error("[DownloadError] : Failed to Download Video")
         except GeoRestrictedError:
@@ -83,22 +89,43 @@ class Downloader:
                 "[GeoRestrictedError] : The uploader has not made this video"
                 " available in your country"
             )
-        except Exception as all_e:
-            logger.error(format_exception(all_e))
-        else:
-            return out
+        except Exception:
+            logger.exception("Something Went Wrong")
 
     async def download(
         self,
-        *args,
+        url: str,
+        uid: str,
         downtype: str,
         update: Union[Message, CallbackQuery],
         with_progress: bool = True,
         edit_rate: int = 8,
-    ):
+    ) -> str:
+        """Download Media with progress bar
+
+        Parameters:
+        ----------
+            - url (`str`): Youtube_dl supported URL.
+            - uid (`str`): Preferred media choice.
+            - downtype (`str`): [`'audio'` | `'video'`].
+            - update (`Union[Message, CallbackQuery]`): A Pyrogram update to display progress.
+            - with_progress (`bool`, optional): Enable / Disable progress. (Defaults to `True`)
+            - edit_rate (`int`, optional): Progress edit rate in seconds. (Defaults to `8`)
+
+        Returns:
+        -------
+            `str`: Key to upload media, After successful download
+
+        Raises:
+        ------
+            `TypeError`: On unsupported `downtype`
+            `StopTransmission`: When download is cancelled
+            `DownloadError`: In case youtube_dl download return code is not equal to 0
+        """
         last_update_time = None
 
         process = Process(update)
+        key = rnd_key()
 
         def prog_func(prog_data: Dict) -> None:
             nonlocal last_update_time
@@ -148,11 +175,15 @@ class Downloader:
             last_update_time = now
 
         if downtype == "video":
-            return await self.video_downloader(*args, prog_func)
+            out = await self.video_downloader(url, uid, key, prog_func)
         elif downtype == "audio":
-            return await self.audio_downloader(*args, prog_func)
+            out = await self.audio_downloader(url, uid, key, prog_func)
         else:
             raise TypeError(f"'{downtype}' is Unsupported !")
+
+        if isinstance(out, int) and out == 0:
+            return key
+        raise DownloadError(str(out))
 
     @staticmethod
     async def progress_func(process: Process, text: str) -> None:
@@ -164,10 +195,10 @@ class Downloader:
                 reply_markup=process.cancel_markup,
             )
         except FloodWait as f:
-            await asyncio.sleep(f.x)
-        except (StopPropagation, StopTransmission, ContinuePropagation) as p_e:
+            await asyncio.sleep(f.x + 2)
+        except (StopPropagation, StopTransmission) as p_e:
             raise p_e
-        except MessageNotModified:
+        except (ContinuePropagation, MessageNotModified):
             pass
         except Exception as e:
             logger.error(format_exception(e))

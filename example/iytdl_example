@@ -26,7 +26,9 @@ class YoutubeDL(mod.Module):
             session=self.bot.http,  # aiohttp.ClientSession (optional)
             silent=True,  # supress Youtubedl output
             loop=self.bot.loop,  # event loop (optional)
-            log_group_id=-1001378211961,  # log channel to upload video before editing the inline message (required)
+            log_group_id=-1001378211961,
+            # log channel to upload video before editing the inline message
+            # (required)
         )
 
     async def on_exit(self):
@@ -36,7 +38,8 @@ class YoutubeDL(mod.Module):
     @OnInline(r"ytdl (.+)", owner_only=True)
     async def on_inline(self, i_q: InlineQuery):
         query = i_q.matches[0].group(1)
-        # parse: Automatically detects generic url, youtube link or even a search query
+        # parse: Automatically detects generic url, youtube link or even a
+        # search query
         data = await self.ytdl.parse(query, extract=False)
         await i_q.answer(
             results=[
@@ -83,7 +86,8 @@ class YoutubeDL(mod.Module):
     async def extract_info(self, c_q: CallbackQuery):
         await c_q.answer()
         key = c_q.matches[0].group("key")
-        # After answering InlineQuery now the extract the info and edit the messsage
+        # After answering InlineQuery now the extract the info and edit the
+        # messsage
         if data := await self.ytdl.extract_info_from_key(key):
             # Youtube Link i.e no need to edit Image
             if len(key) == 11:

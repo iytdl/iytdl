@@ -9,6 +9,7 @@ isort . &> /dev/null
 echo "Building..."
 rm -rf dist
 pip uninstall iytdl -y
-poetry build &> /dev/null
-pip install "$(ls dist/*.whl)" &> /dev/null
+poetry build > /dev/null
+iytdl_wheel=$(echo $(ls dist/*.whl) | xargs)
+pip install $iytdl_wheel &> /dev/null
 echo "Installed 'iytdl' Sucessfully"

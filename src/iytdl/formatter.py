@@ -8,7 +8,6 @@ from typing import Any, Dict, Union
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from iytdl.constants import *  # noqa ignore=F405
-from iytdl.utils import run_sync
 
 
 class ResultFormatter:
@@ -90,7 +89,6 @@ class ResultFormatter:
         return json.dumps(self.__dict__, indent=4)
 
 
-@run_sync
 def gen_search_markup(
     key: str, yt_id: str, total: int, page: int = 1
 ) -> InlineKeyboardMarkup:

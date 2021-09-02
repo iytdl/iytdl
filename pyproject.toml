@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "iytdl"
-version = "0.3.1"
-description ="Asynchronous Standalone Inline YouTube-DL Module"
+version = "0.4.0"
+description ="Aysnc Inline YouTube-DL for Pyrogram"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
 homepage = "https://github.com/iytdl/iytdl"
 repository = "https://github.com/iytdl/iytdl"
-keywords = ["iytdl", "package"]
+keywords = ["iytdl", "yt-dlp", "youtube-dl", "pyrogram", "x"]
 license = "GPLv3"
 readme = "README.md"
 
@@ -26,7 +26,6 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4"
-youtube_dl = "^2021.6.6"
 youtube-search-python = "1.4.6"
 Pyrogram = "^1.2.9"
 Pillow = "^8.3.1"
@@ -35,6 +34,8 @@ hachoir = "^3.1.2"
 mutagen = "^1.45.1"
 aiosqlite = "^0.17.0"
 aiohttp = "^3.7.4"
+yt-dlp = "^2021.8.10"
+TgCrypto = "^1.2.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

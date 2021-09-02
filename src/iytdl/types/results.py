@@ -2,14 +2,12 @@ __all__ = ["SearhResult"]
 
 import json
 
-from typing import Optional
-
 from pyrogram.types import InlineKeyboardMarkup
 
 
 class SearhResult:
     key: str
-    buttons: Optional[InlineKeyboardMarkup]
+    buttons: InlineKeyboardMarkup
     text: str
     image: str
 
@@ -18,12 +16,16 @@ class SearhResult:
         key: str,
         text: str,
         image: str,
-        buttons: Optional[InlineKeyboardMarkup] = None,
+        buttons: InlineKeyboardMarkup,
     ) -> None:
         self.key = key
         self.buttons = buttons
         self.caption = text
         self.image_url = image
 
-    def __repr__(self):
-        return json.dumps(self.__dict__, indent=4)
+    def __repr__(self) -> str:
+        out = self.__dict__.copy()
+        out["buttons"] = (
+            json.loads(str(btn)) if (btn := out.pop("buttons", None)) else None
+        )
+        return json.dumps(out, indent=4)
