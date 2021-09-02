@@ -1,0 +1,37 @@
+{{! X Docstring Template }}
+{{summaryPlaceholder}}
+{{#parametersExist}}
+
+Parameters:
+----------
+{{#args}}
+    - {{var}} (`{{typePlaceholder}}`): {{descriptionPlaceholder}}.
+{{/args}}
+{{#kwargs}}
+    - {{var}} (`{{typePlaceholder}}`, optional): {{descriptionPlaceholder}}. (Defaults to `{{&default}}`)
+{{/kwargs}}
+{{/parametersExist}}
+{{#exceptionsExist}}
+
+Raises:
+------
+{{#exceptions}}
+    `{{type}}`: In case of {{descriptionPlaceholder}}
+{{/exceptions}}
+{{/exceptionsExist}}
+{{#returnsExist}}
+
+Returns:
+-------
+{{#returns}}
+    `{{typePlaceholder}}`: {{descriptionPlaceholder}}
+{{/returns}}
+{{/returnsExist}}
+{{#yieldsExist}}
+
+Yields:
+------
+{{#yields}}
+    `{{typePlaceholder}}`: {{descriptionPlaceholder}}
+{{/yields}}
+{{/yieldsExist}}

@@ -87,11 +87,11 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Raises:
         ------
-            NoResultFoundError: In case of no result.
+            `NoResultFoundError`: In case of no result.
 
         Returns:
         -------
-            types.SearhResult
+            `types.SearhResult`
         """
         hash_key = hashlib.sha1(query.encode(encoding="UTF-8")).hexdigest()
         # sqlite doesn't support numbers in table name
@@ -118,13 +118,12 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Parameters:
         ----------
-            key (`str`): Unique Key.
-
-            index (`int`): Result Index.
+            - key (`str`): Unique Key.
+            - index (`int`): Result Index.
 
         Returns:
         -------
-            types.SearhResult
+            `types.SearhResult`
         """
         if cached_data := await self.cache.get_key(key, index=index - 1):
             s_len, v_data = cached_data
@@ -140,11 +139,11 @@ class iYTDL(Extractor, Downloader, Uploader):
         """
         Parameters:
         ----------
-            key (`str`): Unique Key.
+            - key (`str`): Unique Key.
 
         Returns:
         -------
-            Optional[types.SearhResult]: If key exist in cache.
+            `Optional[types.SearhResult]`: If key exist in cache.
         """
         if len(key) == 11:
             # yt_id
@@ -157,17 +156,16 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Parameters:
         ----------
-            search_query (`str`): accepts [Youtube URL | URL | Text].
-
-            extract (`bool`, optional): Extract Information (Defaults to `True`)
+            - search_query (`str`): accepts [Youtube URL | URL | Text].
+            - extract (`bool`, optional): Extract Information (Defaults to `True`)
 
         Raises:
         ------
-            NoResultFoundError: In case of no result.
+            `NoResultFoundError`: In case of no result.
 
         Returns:
         -------
-            types.SearhResult
+            `types.SearhResult`
         """
         query_split = search_query.split()
         if len(query_split) == 1:
@@ -223,11 +221,11 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Parameters:
         ----------
-            key (`str`): Unique Key.
+            - key (`str`): Unique Key.
 
         Returns:
         -------
-            Tuple[InputMediaPhoto, InlineKeyboardMarkup]
+            `Tuple[InputMediaPhoto, InlineKeyboardMarkup]`
         """
         if cached_data := await self.cache.get_key(key):
             content = "\n".join(
@@ -267,7 +265,7 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Returns:
         -------
-            str: Telegra.ph URL
+            `str`: Telegra.ph URL
         """
         post_client = TelegraphPoster(use_api=True)
         auth_name = "X"
@@ -290,7 +288,7 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Returns:
         -------
-            str: Thumbnail URL
+            `str`: Thumbnail URL
         """
         for quality in (
             "maxresdefault",

@@ -13,7 +13,7 @@
 
 <h2 align="center"> Aysnc Inline YouTube-DL for Pyrogram</h2>
 
-## ⬇️ Installing
+## ⬇️ Installation
 
 > Install
 
@@ -27,22 +27,43 @@ pip3 install iytdl
 pip3 install -U iytdl
 ```
 
-## ⭐️ Features
+> Build Wheel Locally
 
-- Fully Asynchronous
-- Fast and Memory Efficient (uses Aiosqlite for Caching)
-- Uses search query based sha1 hashes to store results to avoid storing duplicate data
-- Supports Context Manager
-- [Supported Sites](https://ytdl-org.github.io/youtube-dl/supportedsites.html)
+```bash
+git clone https://github.com/iytdl/iytdl.git
+cd iytdl
+poetry install
+
+chmod +x scripts/install.sh && ./scripts/install.sh
+```
+
+## Features
+
+- Async and memory efficient (uses Aiosqlite for Caching)
+- Uses hashing avoid storing duplicate data
+- Supports context manager
+- Supports External Downloader [[Aria2c](https://github.com/iytdl/iytdl/blob/master/tests/test_download_upload.py#L20)]
+- [Supported Sites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md)
 
 ## Requirements
 
-- [YT-DLP](https://github.com/yt-dlp/yt-dlp)
+- [YT-DLP](https://github.com/yt-dlp/yt-dlp) (Active youtube-dl fork)
 - [Python](https://www.python.org/) >=3.8,<4
 - [Pyrogram](https://docs.pyrogram.org/) based Bot
 - [FFmpeg](http://ffmpeg.org/)
+- [Aria2c](https://aria2.github.io/) (_Optional_)
 
-## Supported Callbacks
+## Pre-commit Hooks
+
+- [Install Pre-commit Hooks](https://pre-commit.com/#installation)
+- `pre-commit install`
+
+## Examples
+
+### Callbacks
+
+<details>
+  <summary><b>OPEN</b></summary>
 
 - Back and Next
 
@@ -74,8 +95,8 @@ r"yt_(?P<mode>gen|dl)\|(?P<key>[\w-]+)\|(?P<choice>[\w-]+)\|(?P<dl_type>a|v)$"
 r"^yt_cancel\|(?P<process_id>[\w\.]+)$"
 ```
 
-## Usage:
+</details>
 
-### Example Plugin
+### Module
 
-### [iytdl_example.py](https://github.com/iytdl/iytdl/blob/master/example/iytdl_example.py)
+### [YouTube.py](https://github.com/code-rgb/droid/blob/master/droid/modules/youtube.py)

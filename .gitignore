@@ -137,7 +137,6 @@ celerybeat.pid
 .heroku/
 .profile.d/
 vendor/
-.vscode/
 .idea/
 *.session
 

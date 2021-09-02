@@ -27,6 +27,19 @@ logger = logging.getLogger(__name__)
 
 class Downloader:
     async def video_downloader(self, url: str, uid: str, rnd_key: str, prog_func):
+        """YouTubeDL Video Downloader
+
+        Parameters:
+        ----------
+            - url (`str`): youtube-dl supported URL.
+            - uid (`str`): format.
+            - rnd_key (`str`): Unique Key.
+            - prog_func (`[type]`): progress Hook.
+
+        Returns:
+        -------
+            `[type]`: [description]
+        """
         options = {
             "addmetadata": True,
             "geo_bypass": True,
