@@ -36,7 +36,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         delete_media: bool = False,
         external_downloader: Optional[types.ExternalDownloader] = None,
     ) -> None:
-        """Main Class
+        """Initialize Instance
 
         Parameters:
         ----------
@@ -74,6 +74,25 @@ class iYTDL(Extractor, Downloader, Uploader):
 
     @classmethod
     async def init(cls, *args, **kwargs) -> "iYTDL":
+        """Utility method to create new class instance, Note: no need to start()
+
+        Parameters:
+        ----------
+            - log_group_id (`Union[int, str]`):  Log channel / group id to upload downloaded media.
+            - session (`Optional[ClientSession]`, optional): Aiohttp ClientSession. (Defaults to `None`)
+            - silent (`bool`, optional): Disable youtube_dl stdout. (Defaults to `False`)
+            - download_path (`str`, optional): Custom download location. (Defaults to `"downloads"`)
+            - loop (`Optional[asyncio.AbstractEventLoop]`, optional): Event loop. (Defaults to `None`)
+            - default_thumb (`str`, optional): Fallback thumbnail. (Defaults to `"https://i.imgur.com/4LwPLai.png"`)
+            - cache_path (`str`, optional): Path to store cache. (Defaults to `""`)
+            - delete_media: (`bool`, optional): Delete media from local storage after uploading on Telegram. (Defaults to `False`)
+            - external_downloader: (`Optional[types.ExternalDownloader]`, optional): External Downloader e.g `types.external_downloader.Aria2c`. (Defaults to `None`)
+
+        Returns:
+        -------
+            `~iytdl.iYTDL`
+        """
+
         yt = cls(*args, **kwargs)
         await yt.start()
         return yt

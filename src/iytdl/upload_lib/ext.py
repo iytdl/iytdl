@@ -4,5 +4,5 @@ from typing import Tuple
 
 
 audio: Tuple[str] = (".mp3", ".flac", ".wav", ".m4a")
-video: Tuple[str] = (".mkv", ".mp4", ".webm")
+video: Tuple[str] = (".mkv", ".mp4", ".webm")  # Maybe remove .webm
 photo: Tuple[str] = (".jpg", ".jpeg", ".png", ".bmp", ".webp")

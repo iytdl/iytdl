@@ -19,11 +19,11 @@ class Process:
         """
         Parameters:
         ----------
-            update (`Union[Message, CallbackQuery]`)
+            - update (`Union[Message, CallbackQuery]`)
 
         Raises:
         ------
-            UnsupportedUpdateError: In case of unsupported update.
+            `UnsupportedUpdateError`: In case of unsupported update.
         """
 
         if not isinstance(update, (Message, CallbackQuery)):
@@ -48,7 +48,7 @@ class Process:
 
         Parameters:
         ----------
-            process_id (`str`): Unique ID.
+            - process_id (`str`): Unique ID.
 
         """
         cls.cancelled_ids.add(process_id)
@@ -59,7 +59,7 @@ class Process:
 
         Parameters:
         ----------
-            process_id (`str`): Unique ID.
+            - process_id (`str`): Unique ID.
 
         """
         cls.cancelled_ids.remove(process_id)
@@ -75,7 +75,7 @@ class Process:
 
         Returns:
         -------
-            bool: True if cancelled else False
+            - `bool`: True if cancelled else False
         """
         return self.id in self.cancelled_ids
 

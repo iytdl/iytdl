@@ -161,7 +161,7 @@ class Extractor:
 
         Returns:
         -------
-            `SearhResult`: ~iytdl.types.SearhResult
+            `SearhResult`: `~iytdl.types.SearhResult`
         """
         buttons = [
             [
@@ -169,7 +169,7 @@ class Extractor:
                     "⭐️ BEST - 📹 MKV", callback_data=f"yt_dl|{yt_id}|mkv|v"
                 ),
                 InlineKeyboardButton(
-                    "⭐️ BEST - 📹 WebM/MP4",
+                    "⭐️ BEST - 📹 MP4",
                     callback_data=f"yt_dl|{yt_id}|mp4|v",
                 ),
             ]

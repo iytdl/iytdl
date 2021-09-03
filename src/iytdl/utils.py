@@ -60,6 +60,17 @@ def humanbytes(size: Union[float, int]) -> str:
 
 
 def time_formater(value: Union[timedelta, int], precision: int = 0) -> str:
+    """Format Time to Human readable format
+
+    Parameters:
+    ----------
+        - value (`Union[timedelta, int]`): Pass either a `~time.timedelta` or an `int`.
+        - precision (`int`, optional): Decimal Precision. (Defaults to `0`)
+
+    Returns:
+    -------
+        `str`
+    """
     pieces = []
     if isinstance(value, int):
         value = timedelta(seconds=value)
@@ -92,6 +103,17 @@ def rnd_key(length: int = 8) -> str:
 
 
 async def upload_to_telegraph(http: ClientSession, url: str) -> Optional[str]:
+    """Upload Images to Telegra.ph via URL
+
+    Parameters:
+    ----------
+        - http (`ClientSession`): `~aiohttp.ClientSession`.
+        - url (`str`): Http Url.
+
+    Returns:
+    -------
+        `Optional[str]`: Telegra.ph link on success
+    """
     async with http.get(url) as img_url:
         img_bytes = await img_url.read()
     with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_img:
@@ -118,7 +140,17 @@ async def upload_to_telegraph(http: ClientSession, url: str) -> Optional[str]:
 
 
 async def take_screen_shot(video_file: str, ttl: int) -> Optional[str]:
-    """Generate Thumbnail from video"""
+    """Generate Thumbnail from video
+
+    Parameters:
+    ----------
+        - video_file (`str`): Video file path.
+        - ttl (`int`): Timestamp.
+
+    Returns:
+    -------
+        `Optional[str]`: On Success
+    """
     file = Path(video_file)
     ss_path = file.parent.joinpath(f"{file.stem}.jpg")
     cmd = ["ffmpeg", "-ss", str(ttl), "-i", video_file, "-vframes", "1", str(ss_path)]

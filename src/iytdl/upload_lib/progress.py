@@ -51,7 +51,7 @@ async def progress(
         try:
             await process.edit(f"`Finalizing {mode} process ...`")
         except FloodWait as f_w:
-            await asyncio.sleep(f_w.x + 1)
+            await asyncio.sleep(f_w.x + 2)
         return
     now = int(time.time())
     if process.id not in _PROGRESS:

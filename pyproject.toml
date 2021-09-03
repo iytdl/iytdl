@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iytdl"
-version = "0.4.1"
+version = "0.4.2"
 description ="Aysnc Inline YouTube-DL for Pyrogram"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
 homepage = "https://github.com/iytdl/iytdl"
@@ -10,11 +10,11 @@ license = "GPLv3"
 readme = "README.md"
 
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Intended Audience :: Developers",
     "Natural Language :: English",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Software Development",
+    "Topic :: Multimedia :: Video"
 ]
 
 [tool.poetry.dependencies]

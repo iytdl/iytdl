@@ -20,11 +20,11 @@ def unquote_filename(filename: Union[Path, str]) -> str:
 
     Parameters:
     ----------
-        filename (`Union[Path, str]`): Full file name.
+        - filename (`Union[Path, str]`): Full file name.
 
     Returns:
     -------
-        str: New filename after renaming original file
+        `str`: New filename after renaming original file
 
     """
     file = Path(filename) if isinstance(filename, str) else filename
@@ -40,11 +40,11 @@ def thumb_from_audio(filename: Union[Path, str]) -> Optional[str]:
 
     Parameters:
     ----------
-        filename (`Union[Path, str]`): audio file path.
+        - filename (`Union[Path, str]`): audio file path.
 
     Returns:
     -------
-        Optional[str]: if audio has album art
+        `Optional[str]`: if audio has album art
 
     """
     file = Path(filename) if isinstance(filename, str) else filename
@@ -67,7 +67,7 @@ def covert_to_jpg(filename: Union[Path, str]) -> Tuple[str, Tuple[int]]:
 
     Parameters:
     ----------
-        filename (`Union[Path, str]`): Image file path.
+        - filename (`Union[Path, str]`): Image file path.
 
     Returns:
     -------
