@@ -6,8 +6,6 @@ from iytdl import iYTDL
 
 LOG_GROUP_ID = ""
 
-# Test for Search
-
 
 async def test_search():
     async with iYTDL(
@@ -25,5 +23,5 @@ async def test_search():
 
 
 if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(test_search())

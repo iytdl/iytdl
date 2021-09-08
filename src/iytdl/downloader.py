@@ -18,6 +18,7 @@ from pyrogram.types import CallbackQuery, Message
 # from youtube_dl.utils import DownloadError, GeoRestrictedError
 from yt_dlp.utils import DownloadError, GeoRestrictedError
 
+from iytdl.exceptions import DownloadFailedError
 from iytdl.processes import Process
 from iytdl.utils import *
 
@@ -124,7 +125,7 @@ class Downloader:
         ------
             `TypeError`: On unsupported `downtype`
             `StopTransmission`: When download is cancelled
-            `DownloadError`: In case youtube_dl download return code is not equal to 0
+            `DownloadFailedError`: In case youtube_dl download return code is not equal to 0
         """
         last_update_time = None
 
@@ -187,7 +188,7 @@ class Downloader:
 
         if isinstance(out, int) and out == 0:
             return key
-        raise DownloadError(str(out))
+        raise DownloadFailedError(str(out))
 
     @staticmethod
     async def progress_func(process: Process, text: str) -> None:

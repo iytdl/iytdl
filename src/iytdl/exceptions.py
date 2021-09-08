@@ -6,5 +6,5 @@ class UnsupportedUpdateError(TypeError):
     pass
 
 
-class DownloadError(Exception):
+class DownloadFailedError(Exception):
     pass

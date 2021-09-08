@@ -264,11 +264,12 @@ class Extractor:
         -------
             `Tuple[str]`: (Full Format str, Display str)
         """
-        filesize_flt = f"[filesize<{max_filesize}M]"
+        filesize_flt = f"[filesize<?{max_filesize}M]"
         if choice_id == "mkv":
-            # Download and Merge (best video) + (best audio), any format except webm
-            choice_str = f"(bestvideo+bestaudio/best)[ext!=?webm]{filesize_flt}" 
-            disp_str = "Best | Video + Audio"
+            # Download and Merge (best video) + (best audio), any format except
+            # webm
+            choice_str = f"(bestvideo+bestaudio/best)[ext!=?webm]{filesize_flt}"
+            disp_str = "Best (Video + Audio)"
         elif choice_id == "mp4":
             # Download best Mp4 format if available
             # Webm is not supported by Telegram anymore
@@ -276,19 +277,21 @@ class Extractor:
                 choice_str = f"(bestvideo[ext=mp4]+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best[ext!=webm]){filesize_flt}"
                 disp_str = "Best MP4"
             else:
-                choice_str = f"(bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best[ext!=webm]){filesize_flt}" 
-                disp_str = "Best MP4 | Video + Audio"
+                # Video from other sites doesn't always have "ext"
+                choice_str = f"(bestvideo[ext=?mp4]+bestaudio[ext=?m4a]/best[ext=?mp4]/best[ext!=?webm]/best){filesize_flt}"
+                disp_str = "Best MP4 (Video + Audio)"
         elif choice_id == "mp3":
             choice_str = f"320{filesize_flt}"
             disp_str = "320 Kbps"
         else:
             disp_str = choice_id
+            # Try to merge best audio if fails then choice_id may includes audio
             if media_type == "v":
                 # mp4 video quality + best compatible audio
                 if yt_url:
-                    choice_str = f"({choice_id}+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
+                    choice_str = f"({choice_id}+(258/256/bestaudio[ext=?m4a]/bestaudio)/{choice_id}/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
                 else:
-                    choice_str = f"({choice_id}+bestaudio[ext=m4a]/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
+                    choice_str = f"({choice_id}+bestaudio/{choice_id}/best[ext=?mp4]/best)[ext!=?webm]{filesize_flt}"
             else:  # Audio
                 choice_str = f"{choice_id}{filesize_flt}"
         return choice_str, disp_str
