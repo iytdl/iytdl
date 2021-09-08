@@ -51,7 +51,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             - external_downloader: (`Optional[types.ExternalDownloader]`, optional): External Downloader e.g `types.external_downloader.Aria2c`. (Defaults to `None`)
         """
         self.yt_link_regex = re.compile(
-            r"(?:youtube\.com|youtu\.be)/(?:[\w-]+\?v=|embed/|v/|shorts/)?([\w-]{11})"
+            r"(?:youtube(?:-nocookie)?\.com|youtu\.be)/(?:[\w-]+\?v=|embed/|v/|shorts/)?([\w-]{11})"
         )
         self.generic_url_regex = re.compile(r"^https?://\S+")
         self.default_thumb = default_thumb
