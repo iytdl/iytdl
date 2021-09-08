@@ -249,7 +249,7 @@ class Extractor:
 
     @staticmethod
     def get_choice_by_id(
-        choice_id: str, media_type: str, yt_url: bool = True
+        choice_id: str, media_type: str, yt_url: bool = True, max_filesize: int = 1950
     ) -> Tuple[str]:
         """youtube-dl downloader formats for video / audio
 
@@ -258,35 +258,37 @@ class Extractor:
             - choice_id (`str`): Format choice.
             - media_type (`str`): `"video"` or `"audio"`.
             - yt_url (`bool`, optional): If URL is from https://www.youtube.com/. (Defaults to `True`)
+            - max_filesize (`int`, optional): Max file size (in MB).
 
         Returns:
         -------
             `Tuple[str]`: (Full Format str, Display str)
         """
+        filesize_flt = f"[filesize<{max_filesize}M]"
         if choice_id == "mkv":
-            # Download and Merge (best video) + (best audio)
-            choice_str = "(bestvideo+bestaudio/best)[filesize<?1950M]"
-            disp_str = "Best (video+audio)"
+            # Download and Merge (best video) + (best audio), any format except webm
+            choice_str = f"(bestvideo+bestaudio/best)[ext!=?webm]{filesize_flt}" 
+            disp_str = "Best | Video + Audio"
         elif choice_id == "mp4":
             # Download best Mp4 format if available
-            # Webm is not supported by Telegram anymore :(
+            # Webm is not supported by Telegram anymore
             if yt_url:
-                choice_str = "(bestvideo[ext=mp4]+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best)[filesize<?1950M]"
+                choice_str = f"(bestvideo[ext=mp4]+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best[ext!=webm]){filesize_flt}"
                 disp_str = "Best MP4"
             else:
-                choice_str = "(bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best)[filesize<?1950M]"
-                disp_str = "Best MP4 (video+audio)"
+                choice_str = f"(bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best[ext!=webm]){filesize_flt}" 
+                disp_str = "Best MP4 | Video + Audio"
         elif choice_id == "mp3":
-            choice_str = "320"
+            choice_str = f"320{filesize_flt}"
             disp_str = "320 Kbps"
         else:
             disp_str = choice_id
             if media_type == "v":
                 # mp4 video quality + best compatible audio
                 if yt_url:
-                    choice_str = f"({disp_str}+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best)[filesize<?1950M]"
+                    choice_str = f"({choice_id}+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
                 else:
-                    choice_str = f"({disp_str}+bestaudio[ext=m4a]/best[ext=mp4]/best)[filesize<?1950M]"
+                    choice_str = f"({choice_id}+bestaudio[ext=m4a]/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
             else:  # Audio
-                choice_str = disp_str
+                choice_str = f"{choice_id}{filesize_flt}"
         return choice_str, disp_str
