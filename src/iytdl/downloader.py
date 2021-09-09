@@ -4,7 +4,6 @@ __all__ = ["Downloader"]
 import asyncio
 import logging
 import os
-from pathlib import Path
 import time
 
 from math import floor

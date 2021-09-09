@@ -285,7 +285,8 @@ class Extractor:
             disp_str = "320 Kbps"
         else:
             disp_str = choice_id
-            # Try to merge best audio if fails then choice_id may includes audio
+            # Try to merge best audio if fails then choice_id may includes
+            # audio
             if media_type == "v":
                 # mp4 video quality + best compatible audio
                 if yt_url:

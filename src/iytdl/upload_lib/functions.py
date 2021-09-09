@@ -1,16 +1,17 @@
 __all__ = ["unquote_filename", "thumb_from_audio", "covert_to_jpg", "take_screen_shot"]
 
 import re
-import asyncio
+
 from io import BytesIO
 from pathlib import Path
 from typing import Any, Optional, Tuple, Union
 
 import mutagen
-from iytdl.utils import run_command
+
 from PIL import Image
 
 from iytdl.upload_lib import ext
+from iytdl.utils import run_command
 
 
 def unquote_filename(filename: Union[Path, str]) -> str:
@@ -117,7 +118,8 @@ async def take_screen_shot(
                 "-of",
                 "default=noprint_wrappers=1:nokey=1",
             ]
-            _dur, _rt_code = await run_command(*get_duration)
+            _dur, _rt_code = await run_command(" ".join(get_duration), shell=True)
+
             if _rt_code != 0:
                 return
             ttl = int(float(_dur)) // 2
@@ -125,6 +127,8 @@ async def take_screen_shot(
             return
     cmd = [
         kwargs.get("ffmpeg", "ffmpeg"),
+        "-hide_banner",
+        "-loglevel error",
         "-ss",
         str(ttl),
         "-i",
@@ -133,6 +137,6 @@ async def take_screen_shot(
         "1",
         f'"{ss_path}"',
     ]
-    rt_code = (await run_command(*cmd))[1]
+    rt_code = (await run_command(" ".join(cmd), shell=True))[1]
     if rt_code == 0 and ss_path.is_file():
         return str(ss_path)

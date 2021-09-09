@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from pyrogram import Client
 
@@ -39,6 +38,4 @@ async def test_dl_upload_aria():
                 await ytdl.upload(app, key, "video", msg)
 
 
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(test_dl_upload_aria())

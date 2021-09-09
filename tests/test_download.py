@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from iytdl import iYTDL
 
@@ -18,7 +17,7 @@ async def test_iytdl_download():
 
         status_code = await ytdl.video_downloader(
             "https://www.dailymotion.com/embed/video/kVUUPJE2HHun2qxaTxN",
-            "bestvideo+bestaudio/best",
+            "best",
             "folder_59r5vewes",
             prog_func,
         )
@@ -26,6 +25,4 @@ async def test_iytdl_download():
             print("Download Successfull")
 
 
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(test_iytdl_download())

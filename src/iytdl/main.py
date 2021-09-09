@@ -11,7 +11,6 @@ from aiohttp import ClientSession
 from html_telegraph_poster import TelegraphPoster
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from youtubesearchpython.__future__ import VideosSearch
-from youtubesearchpython.__future__.search import PlaylistsSearch
 
 from iytdl import types
 from iytdl.constants import YT_VID_URL
@@ -21,7 +20,7 @@ from iytdl.extractors import Extractor
 from iytdl.formatter import ResultFormatter, gen_search_markup
 from iytdl.sql_cache import AioSQLiteDB
 from iytdl.upload_lib.uploader import Uploader
-from iytdl.utils import run_sync, run_command
+from iytdl.utils import run_command, run_sync
 
 
 class iYTDL(Extractor, Downloader, Uploader):
@@ -36,7 +35,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         cache_path: str = "",
         delete_media: bool = False,
         external_downloader: Optional[types.ExternalDownloader] = None,
-        ffmpeg_location: str = "",
+        ffmpeg_location: str = "ffmpeg",
     ) -> None:
         """Main class
 
@@ -96,6 +95,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             - delete_media: (`bool`, optional): Delete media from local storage after uploading on Telegram. (Defaults to `False`)
             - external_downloader: (`Optional[types.ExternalDownloader]`, optional): External Downloader e.g `types.external_downloader.Aria2c`. (Defaults to `None`)
             - ffmpeg_location (`str`, optional): Custom location for FFMPEG. (Defaults to `"ffmpeg"`)
+
         Returns:
         -------
             `~iytdl.iYTDL`

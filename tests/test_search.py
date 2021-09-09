@@ -1,5 +1,4 @@
 import asyncio
-import sys
 
 from iytdl import iYTDL
 
@@ -25,6 +24,4 @@ async def test_search():
         print("Extracted INFO =>", extracted_info, sep="\n")
 
 
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(test_search())

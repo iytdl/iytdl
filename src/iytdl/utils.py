@@ -15,13 +15,11 @@ import tempfile
 from datetime import timedelta
 from functools import partial, wraps
 from io import BytesIO
-from pathlib import Path
 from random import sample
 from typing import Any, Awaitable, Callable, List, Optional, Tuple, Union
 
 from aiohttp import ClientSession, FormData
 from PIL import Image
-from iytdl import exceptions
 
 from iytdl.constants import *  # noqa ignore=F405
 
