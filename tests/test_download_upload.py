@@ -20,7 +20,7 @@ async def test_dl_upload_aria():
         async with iYTDL(
             log_group_id=LOG_GROUP_ID,
             external_downloader=Aria2c(executable_path=""),
-            cache_path="downloads",
+            cache_path="cache",
         ) as ytdl:
             msg = await app.send_photo(
                 LOG_GROUP_ID,
@@ -40,5 +40,5 @@ async def test_dl_upload_aria():
 
 
 if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(test_dl_upload_aria())

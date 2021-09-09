@@ -4,13 +4,14 @@ import asyncio
 import hashlib
 import re
 
-from pathlib import Path
+from pathlib import Path, WindowsPath
 from typing import Optional, Tuple, Union
 
 from aiohttp import ClientSession
 from html_telegraph_poster import TelegraphPoster
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
 from youtubesearchpython.__future__ import VideosSearch
+from youtubesearchpython.__future__.search import PlaylistsSearch
 
 from iytdl import types
 from iytdl.constants import YT_VID_URL
@@ -20,7 +21,7 @@ from iytdl.extractors import Extractor
 from iytdl.formatter import ResultFormatter, gen_search_markup
 from iytdl.sql_cache import AioSQLiteDB
 from iytdl.upload_lib.uploader import Uploader
-from iytdl.utils import run_sync
+from iytdl.utils import run_sync, run_command
 
 
 class iYTDL(Extractor, Downloader, Uploader):
@@ -35,8 +36,9 @@ class iYTDL(Extractor, Downloader, Uploader):
         cache_path: str = "",
         delete_media: bool = False,
         external_downloader: Optional[types.ExternalDownloader] = None,
+        ffmpeg_location: str = "",
     ) -> None:
-        """Initialize Instance
+        """Main class
 
         Parameters:
         ----------
@@ -49,6 +51,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             - cache_path (`str`, optional): Path to store cache. (Defaults to `""`)
             - delete_media: (`bool`, optional): Delete media from local storage after uploading on Telegram. (Defaults to `False`)
             - external_downloader: (`Optional[types.ExternalDownloader]`, optional): External Downloader e.g `types.external_downloader.Aria2c`. (Defaults to `None`)
+            - ffmpeg_location (`str`, optional): Custom location for FFMPEG. (Defaults to `"ffmpeg"`)
         """
         self.yt_link_regex = re.compile(
             r"(?:youtube(?:-nocookie)?\.com|youtu\.be)/(?:[\w-]+\?v=|embed/|v/|shorts/)?([\w-]{11})"
@@ -57,6 +60,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         self.default_thumb = default_thumb
         self.http = session or ClientSession()
         _cache_path = Path(cache_path)
+        _cache_path.mkdir(exist_ok=True, parents=True)
         if _cache_path.is_file():
             raise TypeError(f"'{cache_path}' expected a Directory got a File instead")
         self.cache = AioSQLiteDB(
@@ -69,7 +73,11 @@ class iYTDL(Extractor, Downloader, Uploader):
         self.download_path.mkdir(exist_ok=True, parents=True)
         self.external_downloader = external_downloader
         self.delete_file_after_upload = delete_media
-
+        if ffmpeg_location != "ffmpeg":
+            ffmpeg_location = Path(ffmpeg_location)
+            if not ffmpeg_location.is_file():
+                raise FileNotFoundError(ffmpeg_location)
+        self._ffmpeg = ffmpeg_location
         super().__init__(silent=silent)
 
     @classmethod
@@ -87,7 +95,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             - cache_path (`str`, optional): Path to store cache. (Defaults to `""`)
             - delete_media: (`bool`, optional): Delete media from local storage after uploading on Telegram. (Defaults to `False`)
             - external_downloader: (`Optional[types.ExternalDownloader]`, optional): External Downloader e.g `types.external_downloader.Aria2c`. (Defaults to `None`)
-
+            - ffmpeg_location (`str`, optional): Custom location for FFMPEG. (Defaults to `"ffmpeg"`)
         Returns:
         -------
             `~iytdl.iYTDL`
@@ -324,6 +332,24 @@ class iYTDL(Extractor, Downloader, Uploader):
             link = self.default_thumb
         return link
 
+    async def _check_ffmpeg(self) -> None:
+        if isinstance(self._ffmpeg, Path):
+            ffmpeg = self._ffmpeg
+            _ffprobe = self._ffmpeg.parent.joinpath(
+                f"ffprobe{'.exe' if isinstance(self._ffmpeg, WindowsPath) else ''}"
+            )
+            ffprobe = _ffprobe if _ffprobe.is_file() else None
+        else:
+            ffmpeg = "ffmpeg"
+            ffprobe = "ffprobe"
+        out_1 = await run_command(f"{ffmpeg} -version", shell=True)
+        if out_1[1] != 0:
+            raise ValueError(f"'{ffmpeg}' was not Found !")
+        if ffprobe is not None:
+            out_2 = await run_command(f"{ffprobe} -version", shell=True, silent=True)
+            if out_2[1] == 0:
+                setattr(self, "_ffprobe", ffprobe)
+
     async def stop(self) -> None:
         """Stop iYTDL instance manually or Use Context Manager"""
         if self.http and not self.http.closed:
@@ -332,6 +358,7 @@ class iYTDL(Extractor, Downloader, Uploader):
 
     async def start(self) -> None:
         """Start iYTDL instance manually or Use Context Manager"""
+        await self._check_ffmpeg()
         await self.cache._init()
 
     async def __aenter__(self) -> "iYTDL":

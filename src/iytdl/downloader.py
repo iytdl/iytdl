@@ -4,6 +4,7 @@ __all__ = ["Downloader"]
 import asyncio
 import logging
 import os
+from pathlib import Path
 import time
 
 from math import floor
@@ -47,9 +48,6 @@ class Downloader:
             "quiet": self.silent,
             "logtostderr": self.silent,
         }
-
-        if (ext_dl := self.external_downloader) is not None:
-            options.update(ext_dl._export())
         return await self.ytdownloader(url, options)
 
     async def audio_downloader(
@@ -78,12 +76,14 @@ class Downloader:
             "quiet": self.silent,
             "logtostderr": self.silent,
         }
-        if (ext_dl := self.external_downloader) is not None:
-            options.update(ext_dl._export())
         return await self.ytdownloader(url, options)
 
     @run_sync
     def ytdownloader(self, url: str, options: Dict[str, Any]) -> Union[int, str]:
+        if self._ffmpeg != "ffmpeg":
+            options["ffmpeg_location"] = str(self._ffmpeg)
+        if (ext_dl := self.external_downloader) is not None:
+            options.update(ext_dl._export())
         try:
             with youtube_dl.YoutubeDL(options) as ytdl:
                 return ytdl.download([url])

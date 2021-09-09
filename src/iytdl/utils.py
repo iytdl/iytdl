@@ -3,8 +3,8 @@ __all__ = [
     "sublists",
     "humanbytes",
     "time_formater",
-    "take_screen_shot",
     "rnd_key",
+    "run_command",
 ]
 
 import asyncio
@@ -17,10 +17,11 @@ from functools import partial, wraps
 from io import BytesIO
 from pathlib import Path
 from random import sample
-from typing import Any, Awaitable, Callable, List, Optional, Union
+from typing import Any, Awaitable, Callable, List, Optional, Tuple, Union
 
 from aiohttp import ClientSession, FormData
 from PIL import Image
+from iytdl import exceptions
 
 from iytdl.constants import *  # noqa ignore=F405
 
@@ -139,24 +140,42 @@ async def upload_to_telegraph(http: ClientSession, url: str) -> Optional[str]:
     await run_sync(os.remove)(f_name)
 
 
-async def take_screen_shot(video_file: str, ttl: int) -> Optional[str]:
-    """Generate Thumbnail from video
+async def run_command(
+    *args: Any, shell: bool = False, silent: bool = False
+) -> Tuple[Union[str, int]]:
+    """Run Command in Shell
 
     Parameters:
     ----------
-        - video_file (`str`): Video file path.
-        - ttl (`int`): Timestamp.
+        - shell (`bool`, optional): For single commands. (Defaults to `False`)
+        - silent (`bool`, optional): Disable error logging. (Defaults to `False`)
 
     Returns:
     -------
-        `Optional[str]`: On Success
+        `Tuple[Union[str, int]]`: (stdout, return code)
     """
-    file = Path(video_file)
-    ss_path = file.parent.joinpath(f"{file.stem}.jpg")
-    cmd = ["ffmpeg", "-ss", str(ttl), "-i", video_file, "-vframes", "1", str(ss_path)]
-    process = await asyncio.create_subprocess_exec(
-        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-    )
-    if stderr := await process.communicate()[1]:
-        logger.error(stderr.decode("utf-8", "replace").strip())
-    return str(ss_path) if ss_path.is_file() else None
+    try:
+        if shell:
+            proc = await asyncio.create_subprocess_shell(
+                *args,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+        else:
+            proc = await asyncio.create_subprocess_exec(
+                *args,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+        std_out, std_err = await proc.communicate()
+        if std_err and not silent:
+            logger.error(std_err.decode("utf-8", "replace").strip())
+    except Exception:
+        if not silent:
+            logger.exception(f"Failed to run command => {''.join(args)}")
+        return_code = 1
+        out = ""
+    else:
+        return_code = proc.returncode
+        out = std_out.decode("utf-8", "replace").strip()
+    return (out, return_code)

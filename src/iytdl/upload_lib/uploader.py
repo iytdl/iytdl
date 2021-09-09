@@ -20,7 +20,7 @@ from pyrogram.types import (
 
 from iytdl.processes import Process
 from iytdl.upload_lib import ext
-from iytdl.upload_lib.functions import covert_to_jpg, thumb_from_audio, unquote_filename
+from iytdl.upload_lib.functions import *  # noqa ignore=F405
 from iytdl.upload_lib.progress import progress as upload_progress
 from iytdl.utils import *  # noqa ignore=F405
 
@@ -187,10 +187,15 @@ class Uploader:
         with_progress: bool = True,
     ):
 
-        if not mkwargs.get("thumb") and (duration := mkwargs.get("duration")):
-            ttl = duration // 2
+        if not mkwargs.get("thumb"):
+            ttl = (duration // 2) if (duration := mkwargs.get("duration")) else -1
 
-            mkwargs["thumb"] = await take_screen_shot(mkwargs["video"], ttl)
+            mkwargs["thumb"] = await take_screen_shot(
+                mkwargs["video"],
+                ttl,
+                ffmpeg=self._ffmpeg,
+                ffprobe=getattr(self, "_ffprobe", None),
+            )
 
         if not (
             uploaded := await client.send_video(

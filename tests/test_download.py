@@ -18,7 +18,8 @@ async def test_iytdl_download():
 
         status_code = await ytdl.video_downloader(
             "https://www.dailymotion.com/embed/video/kVUUPJE2HHun2qxaTxN",
-            "bestvideo+bestaudio/best" "folder_59r5vewes",
+            "bestvideo+bestaudio/best",
+            "folder_59r5vewes",
             prog_func,
         )
         if isinstance(status_code, int) and status_code == 0:
