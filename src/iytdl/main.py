@@ -19,6 +19,7 @@ from iytdl.exceptions import *  # noqa ignore=F405
 from iytdl.extractors import Extractor
 from iytdl.formatter import ResultFormatter, gen_search_markup
 from iytdl.sql_cache import AioSQLiteDB
+from iytdl.types import Buttons
 from iytdl.upload_lib.uploader import Uploader
 from iytdl.utils import run_command, run_sync
 
@@ -262,7 +263,7 @@ class iYTDL(Extractor, Downloader, Uploader):
                 )
             )
             telegraph = await self.paste_to_tg("📜  LIST VIEW", content)
-            buttons = InlineKeyboardMarkup(
+            buttons = Buttons(
                 [
                     [
                         InlineKeyboardButton(
