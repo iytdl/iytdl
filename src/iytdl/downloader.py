@@ -104,6 +104,7 @@ class Downloader:
         update: Union[Message, CallbackQuery],
         with_progress: bool = True,
         edit_rate: int = 8,
+        cb_extra: Union[int, str, None] = None,
     ) -> str:
         """Download Media with progress bar
 
@@ -115,6 +116,7 @@ class Downloader:
             - update (`Union[Message, CallbackQuery]`): A Pyrogram update to display progress.
             - with_progress (`bool`, optional): Enable / Disable progress. (Defaults to `True`)
             - edit_rate (`int`, optional): Progress edit rate in seconds. (Defaults to `8`)
+            - cb_extra (`Union[int, str, None]`, optional): Extra callback_data for cancel markup (Defaults to `None`)
 
         Returns:
         -------
@@ -128,7 +130,7 @@ class Downloader:
         """
         last_update_time = None
 
-        process = Process(update)
+        process = Process(update, cb_extra=cb_extra)
         key = rnd_key()
 
         def prog_func(prog_data: Dict) -> None:

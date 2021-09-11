@@ -1,5 +1,6 @@
 __all__ = ["Process"]
 
+
 from typing import Callable, Set, Union
 
 from pyrogram.types import (
@@ -12,14 +13,20 @@ from pyrogram.types import (
 from iytdl.exceptions import UnsupportedUpdateError
 
 
-class Process:
-    cancelled_ids: Set[str] = set()
+_CANCELLED: Set[str] = set()
 
-    def __init__(self, update: Union[Message, CallbackQuery]) -> None:
+
+class Process:
+    def __init__(
+        self,
+        update: Union[Message, CallbackQuery],
+        cb_extra: Union[int, str, None] = None,
+    ) -> None:
         """
         Parameters:
         ----------
             - update (`Union[Message, CallbackQuery]`)
+            - cb_extra (`Union[int, str, None]`, optional) Extra callback_data for cancel markup (default `None`)
 
         Raises:
         ------
@@ -41,9 +48,10 @@ class Process:
         self.edit: Callable = edit_func
         self.edit_media: Callable = media_edit_func
         self.id: str = process_id
+        self.__cb_extra = cb_extra
 
-    @classmethod
-    def cancel_id(cls, process_id: str) -> None:
+    @staticmethod
+    def cancel_id(process_id: str) -> None:
         """Cancel Upload / Download Process by ID
 
         Parameters:
@@ -51,10 +59,11 @@ class Process:
             - process_id (`str`): Unique ID.
 
         """
-        cls.cancelled_ids.add(process_id)
+        global _CANCELLED
+        _CANCELLED.add(process_id)
 
-    @classmethod
-    def remove_id(cls, process_id: str) -> None:
+    @staticmethod
+    def remove_id(process_id: str) -> None:
         """Remove cancelled ID
 
         Parameters:
@@ -62,12 +71,14 @@ class Process:
             - process_id (`str`): Unique ID.
 
         """
-        cls.cancelled_ids.remove(process_id)
+        global _CANCELLED
+        _CANCELLED.remove(process_id)
 
     @property
     def cancel(self) -> None:
         """Cancel process"""
-        self.cancelled_ids.add(self.id)
+        global _CANCELLED
+        _CANCELLED.add(self.id)
 
     @property
     def is_cancelled(self) -> bool:
@@ -77,10 +88,13 @@ class Process:
         -------
             - `bool`: True if cancelled else False
         """
-        return self.id in self.cancelled_ids
+        return self.id in _CANCELLED
 
     @property
     def cancel_markup(self) -> InlineKeyboardMarkup:
+        cb_data = f"yt_cancel|{self.id}"
+        if self.__cb_extra:
+            cb_data += f"-{self.__cb_extra}"
         return InlineKeyboardMarkup(
-            [[InlineKeyboardButton("❌ Cancel", callback_data=f"yt_cancel|{self.id}")]]
+            [[InlineKeyboardButton("❌ Cancel", callback_data=cb_data)]]
         )

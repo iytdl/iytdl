@@ -239,7 +239,7 @@ class Extractor:
         return SearhResult(
             yt_id,
             (
-                f"<b><a href={YT_VID_URL}{yt_id}>{vid_data.get('title')}</a></b>"
+                f"<a href={YT_VID_URL}{yt_id}>{vid_data.get('title')}</a>"
                 if vid_data
                 else ""
             ),
@@ -288,8 +288,9 @@ class Extractor:
             choice_str = "320"
             disp_str = "[ 🎵 ]  320 Kbps"
         else:
-            disp_str = f"[ 🎵 ]  {choice_id}"
+
             if media_type == "v":
+                disp_str = f"[ 🎵 + 📹 ]  {choice_id}"
                 # Merge best compatible audio with choosen video quality
                 if yt_url:
                     choice_str = (
@@ -302,6 +303,7 @@ class Extractor:
                         f"best[ext=?mp4]/best)[ext!=?webm]{filesize_flt}"
                     )
             else:
+                disp_str = f"[ 🎵 ]  {choice_id}"
                 # Choosen audio quality
                 choice_str = choice_id
         return choice_str, disp_str

@@ -7,7 +7,7 @@ from typing import Dict, List, Union
 class ExternalDownloader:
     def _export(self) -> Dict[str, Union[str, List[str]]]:
         attrs = list(self.__dataclass_fields__)
-        if "executable_path" in attrs:
+        if "executable_path" in attrs and self.executable_path != "":
             ext_dl = self.executable_path
             attrs.remove("executable_path")
         else:

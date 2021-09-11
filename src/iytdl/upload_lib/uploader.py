@@ -142,6 +142,7 @@ class Uploader:
         update: Union[CallbackQuery, Message],
         caption_link: Optional[str] = None,
         with_progress: bool = True,
+        cb_extra: Union[int, str, None] = None,
     ) -> Union[CallbackQuery, Message]:
         """Upload downloaded Media with progress
 
@@ -153,6 +154,7 @@ class Uploader:
             - update (`Union[CallbackQuery, Message]`): Pyrogram Update to edit message.
             - caption_link (`Optional[str]`, optional): Custom caption href link. (Defaults to `None`)
             - with_progress (`bool`, optional): Enable / Disable progress. (Defaults to `True`)
+            - cb_extra (`Union[int, str, None]`, optional): Extra callback_data for cancel markup (Defaults to `None`)
 
         Returns:
         -------
@@ -161,10 +163,10 @@ class Uploader:
         if mkwargs := await self.find_media(key, downtype):
 
             if caption_link:
-                caption = f"<b><a href={caption_link}>{mkwargs['file_name']}</a></b>"
+                caption = f"<a href={caption_link}>{mkwargs['file_name']}</a>"
             else:
-                caption = f"<b>{mkwargs['file_name']}</b>"
-            process = Process(update)
+                caption = mkwargs["file_name"]
+            process = Process(update, cb_extra=cb_extra)
             try:
                 if downtype == "video":
                     return await self.__upload_video(
