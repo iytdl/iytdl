@@ -251,48 +251,57 @@ class Extractor:
     def get_choice_by_id(
         choice_id: str, media_type: str, yt_url: bool = True, max_filesize: int = 1950
     ) -> Tuple[str]:
-        """youtube-dl downloader formats for video / audio
+        """Youtube-dl downloader formats for video / audio
 
         Parameters:
         ----------
             - choice_id (`str`): Format choice.
             - media_type (`str`): `"video"` or `"audio"`.
             - yt_url (`bool`, optional): If URL is from https://www.youtube.com/. (Defaults to `True`)
-            - max_filesize (`int`, optional): Max file size (in MB).
+            - max_filesize (`int`, optional): Max video filesize (in MB).
 
         Returns:
         -------
-            `Tuple[str]`: (Full Format str, Display str)
+            `Tuple[str]`: (Quality format, Display str)
         """
-        filesize_flt = f"[filesize<?{max_filesize}M]"
+        filesize_flt = f"[filesize<?{max_filesize}M]"  # Max filesize
         if choice_id == "mkv":
-            # Download and Merge (best video) + (best audio), any format except
-            # webm
+            # Overall Best format
+            # - can have any video format except `.webm` as it is uploaded as document.
             choice_str = f"(bestvideo+bestaudio/best)[ext!=?webm]{filesize_flt}"
-            disp_str = "Best (Video + Audio)"
+            disp_str = "[ 🎵 + 📹 ]  Best"
         elif choice_id == "mp4":
-            # Download best Mp4 format if available
-            # Webm is not supported by Telegram anymore
+            # Best streamable format i.e `.mp4`
+            disp_str = "[ 🎵 + 📹 ]  Best MP4"
             if yt_url:
-                choice_str = f"(bestvideo[ext=mp4]+(258/256/bestaudio[ext=m4a])/best[ext=mp4]/best[ext!=webm]){filesize_flt}"
-                disp_str = "Best MP4"
+                choice_str = (
+                    "(bestvideo[ext=mp4]+(258/256/bestaudio[ext=m4a])"
+                    f"/best[ext=mp4]/best[ext!=webm]){filesize_flt}"
+                )
             else:
-                # Video from other sites doesn't always have "ext"
-                choice_str = f"(bestvideo[ext=?mp4]+bestaudio[ext=?m4a]/best[ext=?mp4]/best[ext!=?webm]/best){filesize_flt}"
-                disp_str = "Best MP4 (Video + Audio)"
+                choice_str = (
+                    "(bestvideo[ext=?mp4]+bestaudio[ext=?m4a]"
+                    f"/best[ext=?mp4]/best[ext!=?webm]/best){filesize_flt}"
+                )
         elif choice_id == "mp3":
-            choice_str = f"320{filesize_flt}"
-            disp_str = "320 Kbps"
+            # Best audio quality upscaled to 320 kbps
+            choice_str = "320"
+            disp_str = "[ 🎵 ]  320 Kbps"
         else:
-            disp_str = choice_id
-            # Try to merge best audio if fails then choice_id may includes
-            # audio
+            disp_str = f"[ 🎵 ]  {choice_id}"
             if media_type == "v":
-                # mp4 video quality + best compatible audio
+                # Merge best compatible audio with choosen video quality
                 if yt_url:
-                    choice_str = f"({choice_id}+(258/256/bestaudio[ext=?m4a]/bestaudio)/{choice_id}/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
+                    choice_str = (
+                        f"({choice_id}+(258/256/bestaudio[ext=?m4a]/bestaudio)"
+                        f"/{choice_id}/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
+                    )
                 else:
-                    choice_str = f"({choice_id}+bestaudio/{choice_id}/best[ext=?mp4]/best)[ext!=?webm]{filesize_flt}"
-            else:  # Audio
-                choice_str = f"{choice_id}{filesize_flt}"
+                    choice_str = (
+                        f"({choice_id}+bestaudio/{choice_id}/"
+                        f"best[ext=?mp4]/best)[ext!=?webm]{filesize_flt}"
+                    )
+            else:
+                # Choosen audio quality
+                choice_str = choice_id
         return choice_str, disp_str

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iytdl"
-version = "0.5.0"
+version = "0.5.1"
 description ="Aysnc Inline YouTube-DL for Pyrogram"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
 homepage = "https://github.com/iytdl/iytdl"
