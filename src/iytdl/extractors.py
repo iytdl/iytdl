@@ -295,12 +295,11 @@ class Extractor:
                 if yt_url:
                     choice_str = (
                         f"({choice_id}+(258/256/bestaudio[ext=?m4a]/bestaudio)"
-                        f"/{choice_id}/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
+                        f"/best[ext=mp4]/best)[ext!=?webm]{filesize_flt}"
                     )
                 else:
                     choice_str = (
-                        f"({choice_id}+bestaudio/{choice_id}/"
-                        f"best[ext=?mp4]/best)[ext!=?webm]{filesize_flt}"
+                        f"({choice_id}+bestaudio/best[ext=?mp4]/best)[ext!=?webm]{filesize_flt}"
                     )
             else:
                 disp_str = f"[ 🎵 ]  {choice_id}"
