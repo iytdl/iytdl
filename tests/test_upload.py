@@ -1,4 +1,4 @@
-import asyncio
+import pytest
 
 from pyrogram import Client
 
@@ -14,7 +14,8 @@ LOG_GROUP_ID = ""
 # Test for Download, Upload and Aria2c
 
 
-async def test_dl_upload_aria():
+@pytest.mark.asyncio
+async def test_upload():
     async with Client(":memory:", API_ID, API_HASH, bot_token=BOT_TOKEN) as app:
         async with iYTDL(
             log_group_id=LOG_GROUP_ID,
@@ -26,6 +27,7 @@ async def test_dl_upload_aria():
                 photo="https://i.imgur.com/Q94CDKC.png",
                 caption="",
             )
+            assert msg
             key = await ytdl.download(
                 "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                 ytdl.get_choice_by_id("mp4", "video", yt_url=True)[0],
@@ -33,9 +35,5 @@ async def test_dl_upload_aria():
                 downtype="video",
                 update=msg,
             )
-
-            if key is not None:
-                await ytdl.upload(app, key, "video", msg)
-
-
-asyncio.run(test_dl_upload_aria())
+            assert key
+            assert await ytdl.upload(app, key, "video", msg)
