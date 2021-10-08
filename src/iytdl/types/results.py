@@ -1,4 +1,4 @@
-__all__ = ["SearhResult", "Buttons"]
+__all__ = ["SearchResult", "Buttons"]
 
 import json
 
@@ -61,7 +61,7 @@ class Buttons(InlineKeyboardMarkup):
         return self.__add__(extra)
 
 
-class SearhResult:
+class SearchResult:
     def __init__(
         self,
         key: str,
