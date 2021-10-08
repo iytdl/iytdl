@@ -1,5 +1,7 @@
-from iytdl import iYTDL
 import pytest
+
+from iytdl import iYTDL
+
 
 LOG_GROUP_ID = 0
 
