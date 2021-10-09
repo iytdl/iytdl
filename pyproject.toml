@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iytdl"
-version = "0.5.4"
+version = "0.5.5"
 description ="Async Inline YouTube-DL for Pyrogram based Bots"
 authors = ["Leorio Paradinight <62891774+code-rgb@users.noreply.github.com>"]
 homepage = "https://github.com/iytdl/iytdl"
