@@ -11,7 +11,7 @@
 
 </p>
 
-<h2 align="center"> Aysnc Inline YouTube-DL for Pyrogram</h2>
+<h2 align="center">Async Inline YouTube-DL for Pyrogram based Bots</h2>
 
 ## ⬇️ Installation
 
