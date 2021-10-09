@@ -106,7 +106,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         await yt.start()
         return yt
 
-    async def search(self, query: str) -> types.SearhResult:
+    async def search(self, query: str) -> types.SearchResult:
         """Search
 
         Parameters:
@@ -119,7 +119,7 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Returns:
         -------
-            `types.SearhResult`
+            `types.SearchResult`
         """
         hash_key = hashlib.sha1(query.encode(encoding="UTF-8")).hexdigest()
         # sqlite doesn't support numbers in table name
@@ -137,11 +137,11 @@ class iYTDL(Extractor, Downloader, Uploader):
             v_data = search_data[0]
             s_len = len(search_data)
         r1 = ResultFormatter(**v_data)
-        return types.SearhResult(
+        return types.SearchResult(
             key, r1.msg, r1.thumb, gen_search_markup(key, r1.yt_id, s_len)
         )
 
-    async def next_result(self, key: str, index: int) -> types.SearhResult:
+    async def next_result(self, key: str, index: int) -> types.SearchResult:
         """Get next result from cached data
 
         Parameters:
@@ -151,19 +151,19 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Returns:
         -------
-            `types.SearhResult`
+            `types.SearchResult`
         """
         if cached_data := await self.cache.get_key(key, index=index - 1):
             s_len, v_data = cached_data
             vid = ResultFormatter(**v_data)
-            return types.SearhResult(
+            return types.SearchResult(
                 key,
                 vid.msg,
                 vid.thumb,
                 gen_search_markup(key, vid.yt_id, s_len, index),
             )
 
-    async def extract_info_from_key(self, key: str) -> Optional[types.SearhResult]:
+    async def extract_info_from_key(self, key: str) -> Optional[types.SearchResult]:
         """
         Parameters:
         ----------
@@ -171,7 +171,7 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Returns:
         -------
-            `Optional[types.SearhResult]`: If key exist in cache.
+            `Optional[types.SearchResult]`: If key exist in cache.
         """
         if len(key) == 11:
             # yt_id
@@ -179,7 +179,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         if url := await self.cache.get_url(key):
             return await self.generic_extractor(key, url)
 
-    async def parse(self, search_query: str, extract: bool = True) -> types.SearhResult:
+    async def parse(self, search_query: str, extract: bool = True) -> types.SearchResult:
         """Automatically parses `search_query`.
 
         Parameters:
@@ -193,7 +193,7 @@ class iYTDL(Extractor, Downloader, Uploader):
 
         Returns:
         -------
-            `types.SearhResult`
+            `types.SearchResult`
         """
         query_split = search_query.split()
         if len(query_split) == 1:
@@ -205,7 +205,7 @@ class iYTDL(Extractor, Downloader, Uploader):
                 thumb = await self.get_ytthumb(yt_id)
                 if extract:
                     return await self.get_download_button(yt_id)
-                return types.SearhResult(
+                return types.SearchResult(
                     yt_id,
                     f"**[YouTube URL]** -> `'{YT_VID_URL}{yt_id}'`",
                     thumb,
@@ -226,7 +226,7 @@ class iYTDL(Extractor, Downloader, Uploader):
                 if extract:
                     return await self.generic_extractor(key, url)
 
-                return types.SearhResult(
+                return types.SearchResult(
                     key,
                     f"**[Generic URL]** -> `'{url}'`",
                     self.default_thumb,
