@@ -14,7 +14,7 @@ from yt_dlp.utils import DownloadError, ExtractorError, UnsupportedError
 
 from iytdl.constants import YT_VID_URL
 from iytdl.formatter import ResultFormatter as res_f
-from iytdl.types import SearhResult
+from iytdl.types import SearchResult
 from iytdl.utils import *  # noqa ignore=F405
 
 
@@ -26,7 +26,7 @@ class Extractor:
         self.silent = silent
 
     @run_sync
-    def generic_extractor(self, key: str, url: str) -> Optional[SearhResult]:
+    def generic_extractor(self, key: str, url: str) -> Optional[SearchResult]:
         """Generic extractor for URLs other than YouTube
         [more info](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
 
@@ -37,7 +37,7 @@ class Extractor:
 
         Returns:
         -------
-            `Optional[SearhResult]`: On Success
+            `Optional[SearchResult]`: On Success
         """
         # passing key as we can't pass the entire url in callback_data
         buttons = [
@@ -63,7 +63,7 @@ class Extractor:
             return
         except ExtractorError:
             logger.warning(f"[URL -> {url}] - Failed to Extract Info")
-            return SearhResult(
+            return SearchResult(
                 key,
                 "[No Information]",
                 self.default_thumb,
@@ -114,7 +114,7 @@ class Extractor:
                 ),
                 width=1,
             )
-        return SearhResult(
+        return SearchResult(
             key,
             msg[:1020],
             resp.get("thumbnail", self.default_thumb),
@@ -152,7 +152,7 @@ class Extractor:
         return frmt_list if len(frmt_list) > 1 else raw_formats
 
     @run_sync
-    def get_download_button(self, yt_id: str) -> SearhResult:
+    def get_download_button(self, yt_id: str) -> SearchResult:
         """Generate Inline Buttons for YouTube Video
 
         Parameters:
@@ -161,7 +161,7 @@ class Extractor:
 
         Returns:
         -------
-            `SearhResult`: `~iytdl.types.SearhResult`
+            `SearchResult`: `~iytdl.types.SearchResult`
         """
         buttons = [
             [
@@ -236,7 +236,7 @@ class Extractor:
                 width=2,
             )
 
-        return SearhResult(
+        return SearchResult(
             yt_id,
             (
                 f"<a href={YT_VID_URL}{yt_id}>{vid_data.get('title')}</a>"
