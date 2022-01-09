@@ -33,10 +33,10 @@ class Process:
             `UnsupportedUpdateError`: In case of unsupported update.
         """
 
-        if not isinstance(update, (Message, CallbackQuery)):
+        if type(update) not in [Message, CallbackQuery]):
             raise UnsupportedUpdateError
 
-        if msg := (update if isinstance(update, Message) else update.message):
+        if msg := (update if type(update) == Message) else update.message):
             process_id = f"{msg.chat.id}.{msg.message_id}"
             edit_func = msg.edit_text
             media_edit_func = msg.edit_media
