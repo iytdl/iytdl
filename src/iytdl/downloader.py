@@ -81,8 +81,8 @@ class Downloader:
     def ytdownloader(self, url: str, options: Dict[str, Any]) -> Union[int, str]:
         if self._ffmpeg != "ffmpeg":
             options["ffmpeg_location"] = str(self._ffmpeg)
-        if (ext_dl := self.external_downloader) is not None:
-            options.update(ext_dl._export())
+        if (self.ext_dl := self.external_downloader) is not None:
+            options.update(self.ext_dl._export())
         try:
             with youtube_dl.YoutubeDL(options) as ytdl:
                 return ytdl.download([url])
