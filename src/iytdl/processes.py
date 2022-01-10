@@ -33,7 +33,7 @@ class Process:
             `UnsupportedUpdateError`: In case of unsupported update.
         """
 
-        if type(update) not in [Message, CallbackQuery]):
+        if type(update) not in [Message, CallbackQuery]:
             raise UnsupportedUpdateError
 
         if msg := (update if type(update) == Message) else update.message):
