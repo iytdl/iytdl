@@ -96,6 +96,23 @@ class Downloader:
         except Exception:
             logger.exception("Something Went Wrong")
 
+    def get_uid_by_id(choice_id, media_type: str):
+        if choice_id == "mkv":
+            # default format selection
+            choice_str = "bestvideo+bestaudio/best"
+        elif choice_id == "mp4":
+            # Download best Webm / Mp4 format available or any other best if no mp4
+            # available
+            choice_str = "bestvideo[ext=mp4]+(258/256/140/bestaudio[ext=m4a])"
+        elif choice_id == "mp3":
+            choice_str = "320"
+        else:
+            choice_str = str(choice_id)
+            if media_type == "v":
+                # mp4 video quality + best compatible audio
+                choice_str += "+(258/256/140/bestaudio[ext=m4a])/best"
+        return choice_str
+
     async def download(
         self,
         url: str,
@@ -132,7 +149,7 @@ class Downloader:
 
         process = Process(update, cb_extra=cb_extra)
         key = rnd_key()
-
+        uid_ = get_uid_by_id(uid, downtype)
         def prog_func(prog_data: Dict) -> None:
             nonlocal last_update_time
             now = int(time.time())
@@ -181,9 +198,9 @@ class Downloader:
             last_update_time = now
 
         if downtype == "video":
-            out = await self.video_downloader(url, uid, key, prog_func)
+            out = await self.video_downloader(url, uid_, key, prog_func)
         elif downtype == "audio":
-            out = await self.audio_downloader(url, uid, key, prog_func)
+            out = await self.audio_downloader(url, uid_, key, prog_func)
         else:
             raise TypeError(f"'{downtype}' is Unsupported !")
 
