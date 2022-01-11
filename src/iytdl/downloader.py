@@ -108,7 +108,7 @@ class Downloader:
             choice_str = "320"
         else:
             choice_str = str(choice_id)
-            if media_type == "v":
+            if media_type == "video":
                 # mp4 video quality + best compatible audio
                 choice_str += "+(258/256/140/bestaudio[ext=m4a])/best"
         return choice_str
