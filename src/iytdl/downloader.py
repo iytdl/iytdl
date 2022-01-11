@@ -149,7 +149,7 @@ class Downloader:
 
         process = Process(update, cb_extra=cb_extra)
         key = rnd_key()
-        uid_ = get_uid_by_id(uid, downtype)
+        uid_ = self.get_uid_by_id(uid, downtype)
         def prog_func(prog_data: Dict) -> None:
             nonlocal last_update_time
             now = int(time.time())
