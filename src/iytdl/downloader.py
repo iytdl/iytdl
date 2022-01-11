@@ -96,7 +96,7 @@ class Downloader:
         except Exception:
             logger.exception("Something Went Wrong")
 
-    def get_uid_by_id(choice_id, media_type: str):
+    def get_uid_by_id(self, choice_id, media_type: str):
         if choice_id == "mkv":
             # default format selection
             choice_str = "bestvideo+bestaudio/best"
