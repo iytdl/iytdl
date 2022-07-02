@@ -47,7 +47,7 @@ class Downloader:
             "postprocessors": [{"key": "FFmpegMetadata"}],
             "quiet": self.silent,
             "logtostderr": self.silent,
-            "no_warnings": self.warnings
+            "no_warnings": self.no_warnings
         }
         return await self.ytdownloader(url, options)
 
@@ -76,7 +76,7 @@ class Downloader:
             ],
             "quiet": self.silent,
             "logtostderr": self.silent,
-            "no_warnings": self.warnings
+            "no_warnings": self.no_warnings
         }
         return await self.ytdownloader(url, options)
 
