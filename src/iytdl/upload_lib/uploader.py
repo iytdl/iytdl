@@ -10,6 +10,7 @@ from typing import Any, Dict, Literal, Optional, Union
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from pyrogram import Client
+from pyrogram.enums import MessageMediaType as MMT
 from pyrogram.types import (
     CallbackQuery,
     InputMediaAudio,
@@ -31,7 +32,7 @@ logger = logging.getLogger(__name__)
 class Uploader:
     @run_sync
     def find_media(
-        self, key: str, media_type: Literal["audio", "video"]
+        self, key: str, media_type: Literal[MMT.AUDIO, MMT.VIDEO]
     ) -> Dict[str, Any]:
         """Search Downloaded files for thumbnail and media
 
@@ -49,7 +50,7 @@ class Uploader:
         -------
             `Dict[str, Any]`
         """
-        if media_type not in ("video", "audio"):
+        if media_type not in (MMT.AUDIO, MMT.VIDEO):
             raise TypeError("'media_type' only accepts video or audio")
         media_path = self.download_path.joinpath(key)
         if not media_path.is_dir():
@@ -99,7 +100,7 @@ class Uploader:
     async def get_input_media(
         self,
         key: str,
-        media_type: Literal["audio", "video"],
+        media_type: Literal[MMT.AUDIO, MMT.VIDEO],
         caption: str,
         parse_mode: Optional[str] = "HTML",
     ) -> Union[InputMediaAudio, InputMediaVideo, None]:
