@@ -30,6 +30,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         log_group_id: Union[int, str],
         session: Optional[ClientSession] = None,
         silent: bool = False,
+        warnings: bool = True,
         download_path: str = "downloads",
         loop: Optional[asyncio.AbstractEventLoop] = None,
         default_thumb: str = "https://i.imgur.com/4LwPLai.png",
@@ -45,6 +46,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             - log_group_id (`Union[int, str]`):  Log channel / group id to upload downloaded media.
             - session (`Optional[ClientSession]`, optional): Aiohttp ClientSession. (Defaults to `None`)
             - silent (`bool`, optional): Disable youtube_dl stdout. (Defaults to `False`)
+            - warnings (`bool`, optional): Enable stdout on warnings. (Defaults to `True`)
             - download_path (`str`, optional): Custom download location. (Defaults to `"downloads"`)
             - loop (`Optional[asyncio.AbstractEventLoop]`, optional): Event loop. (Defaults to `None`)
             - default_thumb (`str`, optional): Fallback thumbnail. (Defaults to `"https://i.imgur.com/4LwPLai.png"`)
@@ -78,7 +80,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             if not ffmpeg_location.is_file():
                 raise FileNotFoundError(ffmpeg_location)
         self._ffmpeg = ffmpeg_location
-        super().__init__(silent=silent)
+        super().__init__(silent=silent, warnings=warnings)
 
     @classmethod
     async def init(cls, *args, **kwargs) -> "iYTDL":
@@ -89,6 +91,7 @@ class iYTDL(Extractor, Downloader, Uploader):
             - log_group_id (`Union[int, str]`):  Log channel / group id to upload downloaded media.
             - session (`Optional[ClientSession]`, optional): Aiohttp ClientSession. (Defaults to `None`)
             - silent (`bool`, optional): Disable youtube_dl stdout. (Defaults to `False`)
+            - warnings (`bool`, optional): Enable stdout on warnings. (Defaults to `True`)
             - download_path (`str`, optional): Custom download location. (Defaults to `"downloads"`)
             - loop (`Optional[asyncio.AbstractEventLoop]`, optional): Event loop. (Defaults to `None`)
             - default_thumb (`str`, optional): Fallback thumbnail. (Defaults to `"https://i.imgur.com/4LwPLai.png"`)

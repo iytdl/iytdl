@@ -22,8 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class Extractor:
-    def __init__(self, silent: bool = False) -> None:
+    def __init__(self, silent: bool = False, warnings: bool = True) -> None:
         self.silent = silent
+        self.warnings = warnings
 
     @run_sync
     def generic_extractor(self, key: str, url: str) -> Optional[SearchResult]:
@@ -50,7 +51,7 @@ class Extractor:
                 ),
             ]
         ]
-        params = {"no-playlist": True, "quiet": self.silent, "logtostderr": self.silent}
+        params = {"no-playlist": True, "quiet": self.silent, "logtostderr": self.silent, "no_warnings": self.warnings}
         try:
             resp = youtube_dl.YoutubeDL(params).extract_info(url, download=False)
             # with open("j_debug_data.json", "w") as fx:
@@ -182,7 +183,7 @@ class Extractor:
                 )
             ]
         ]
-        params = {"no-playlist": True, "quiet": self.silent, "logtostderr": self.silent}
+        params = {"no-playlist": True, "quiet": self.silent, "logtostderr": self.silent, "no_warnings": self.warnings}
         try:
             vid_data = youtube_dl.YoutubeDL(params).extract_info(
                 f"{YT_VID_URL}{yt_id}", download=False
