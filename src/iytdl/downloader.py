@@ -12,6 +12,7 @@ from typing import Any, Callable, Dict, Union
 import yt_dlp as youtube_dl
 
 from pyrogram import ContinuePropagation, StopPropagation, StopTransmission
+from pyrogram.enums import ParseMode
 from pyrogram.errors import FloodWait, MessageNotModified
 from pyrogram.types import CallbackQuery, Message
 
@@ -213,7 +214,7 @@ class Downloader:
         try:
             await process.edit(
                 text=text,
-                parse_mode="HTML",
+                parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 reply_markup=process.cancel_markup,
             )

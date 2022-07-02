@@ -17,6 +17,7 @@ from pyrogram.types import (
     InputMediaVideo,
     Message,
 )
+from pyrogram.enums import ParseMode
 
 from iytdl.processes import Process
 from iytdl.upload_lib import ext
@@ -101,7 +102,7 @@ class Uploader:
         key: str,
         media_type: Literal["audio", "video"],
         caption: str,
-        parse_mode: Optional[str] = "HTML",
+        parse_mode: Optional[str] = ParseMode.HTML,
     ) -> Union[InputMediaAudio, InputMediaVideo, None]:
         """Get Input Media
 
@@ -203,7 +204,7 @@ class Uploader:
             uploaded := await client.send_video(
                 chat_id=self.log_group_id,
                 caption=f"📹  {caption}",
-                parse_mode="HTML",
+                parse_mode=ParseMode.HTML,
                 disable_notification=True,
                 progress=upload_progress if with_progress else None,
                 progress_args=(client, process, mkwargs["file_name"])
@@ -244,7 +245,7 @@ class Uploader:
             uploaded := await client.send_audio(
                 chat_id=self.log_group_id,
                 caption=f"🎵  {caption}",
-                parse_mode="HTML",
+                parse_mode=ParseMode.HTML,
                 disable_notification=True,
                 progress=upload_progress if with_progress else None,
                 progress_args=(client, process, mkwargs["file_name"])
