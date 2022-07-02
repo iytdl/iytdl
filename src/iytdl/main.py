@@ -30,7 +30,7 @@ class iYTDL(Extractor, Downloader, Uploader):
         log_group_id: Union[int, str],
         session: Optional[ClientSession] = None,
         silent: bool = False,
-        no_warnings: bool = True,
+        no_warnings: bool = False,
         download_path: str = "downloads",
         loop: Optional[asyncio.AbstractEventLoop] = None,
         default_thumb: str = "https://i.imgur.com/4LwPLai.png",

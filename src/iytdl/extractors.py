@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class Extractor:
-    def __init__(self, silent: bool = False, no_warnings: bool = True) -> None:
+    def __init__(self, silent: bool = False, no_warnings: bool = False) -> None:
         self.silent = silent
         self.no_warnings = no_warnings
 
